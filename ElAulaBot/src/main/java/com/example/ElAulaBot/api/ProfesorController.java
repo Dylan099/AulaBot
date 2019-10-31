@@ -1,5 +1,6 @@
 package com.example.ElAulaBot.api;
 
+import com.example.ElAulaBot.bl.ProfesorBl;
 import com.example.ElAulaBot.dao.ProfesorRepository;
 import com.example.ElAulaBot.domain.Profesor;
 
@@ -14,24 +15,20 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequestMapping("/v1/profesor")
 @RestController
+@RequestMapping("/v1/profesor")
 public class ProfesorController {
 
-    private ProfesorRepository profesorRepository;
+    private ProfesorBl profesorBl;
 
     @Autowired
-    public ProfesorController(ProfesorRepository profesorRepository){
-        this.profesorRepository = profesorRepository;
+    public ProfesorController(ProfesorBl profesorBl){
+        this.profesorBl = profesorBl;
     }
 
     @RequestMapping(value = "/",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
     List<ProfesorDto>all(){
-        List<ProfesorDto> profesorDtoList = new ArrayList<>();
-        for (Profesor profesor : profesorRepository.findAll()){
-            profesorDtoList.add(new ProfesorDto(profesor));
-        }
-        return profesorDtoList;
+        return profesorBl.findAllProfesor();
     }
 
 

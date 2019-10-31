@@ -1,5 +1,9 @@
 package com.example.ElAulaBot.app;
 
+import com.example.ElAulaBot.bl.ProfesorBl;
+import com.example.ElAulaBot.dao.ProfesorRepository;
+import com.example.ElAulaBot.domain.Profesor;
+import com.example.ElAulaBot.dto.ProfesorDto;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -14,18 +18,15 @@ import java.util.List;
 import static java.lang.Math.toIntExact;
 
 public class ElAulaBot extends TelegramLongPollingBot {
+    ProfesorBl profesorBl;
     public void onUpdateReceived(Update update) {
-
-
         if (update.hasMessage() && update.getMessage().hasText()) {
             String message_text = update.getMessage().getText();
             long chat_id = update.getMessage().getChatId();
             if (update.getMessage().getText().equals("/start")) {
-
-
                 SendMessage message = new SendMessage()
                         .setChatId(chat_id)
-                        .setText("Bienvenido, ¿Como desea registrarte?");
+                        .setText("Hola : " + profesorBl.findProfesorById(1).toString());
                 InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
                 List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
                 List<InlineKeyboardButton> rowInline = new ArrayList<>();

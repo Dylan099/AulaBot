@@ -191,7 +191,16 @@ public class Profesor implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.ElAulaBot.domain.Profesor[ idProfesor=" + idProfesor + " ]";
+        return "Profesor{" +
+                "idProfesor=" + idProfesor +
+                ", chatId=" + chatId +
+                ", celular='" + celular + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", txuser='" + txuser + '\'' +
+                ", txhost='" + txhost + '\'' +
+                ", txdate=" + txdate +
+                ", status=" + status +
+                ", cursoCollection=" + cursoCollection +
+                '}';
     }
-    
 }
