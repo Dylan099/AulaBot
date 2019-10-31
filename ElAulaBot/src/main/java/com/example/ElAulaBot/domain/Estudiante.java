@@ -189,9 +189,19 @@ public class Estudiante implements Serializable {
         return true;
     }
 
+
     @Override
     public String toString() {
-        return "com.example.ElAulaBot.domain.Estudiante[ idEstudiante=" + idEstudiante + " ]";
+        return "Estudiante{" +
+                "idEstudiante=" + idEstudiante +
+                ", chatId=" + chatId +
+                ", celular='" + celular + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", txuser='" + txuser + '\'' +
+                ", txhost='" + txhost + '\'' +
+                ", txdate=" + txdate +
+                ", status=" + status +
+                '}';
     }
     
 }
