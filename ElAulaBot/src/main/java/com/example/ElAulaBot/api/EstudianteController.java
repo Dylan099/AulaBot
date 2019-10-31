@@ -24,8 +24,10 @@ public class EstudianteController {
 
     @RequestMapping(value = "/",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
     List<EstudianteDto> all(){
-        return estudianteBl.findAllProfesor();
+        return estudianteBl.findAllEstudiante();
     }
+
+
 
 
 

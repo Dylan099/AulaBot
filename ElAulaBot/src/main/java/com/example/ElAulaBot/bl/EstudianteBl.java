@@ -28,12 +28,13 @@ public class EstudianteBl {
         }
     }
 
-    public List<EstudianteDto> findAllProfesor(){
+    public List<EstudianteDto> findAllEstudiante(){
         List<EstudianteDto> estudianteDtoList = new ArrayList<>();
         for(Estudiante estudiante: estudianteRepository.findAllByStatus(Status.ACTIVE.getStatus())){
             estudianteDtoList.add(new EstudianteDto(estudiante));
         }
         return estudianteDtoList;
     }
+
 
 }

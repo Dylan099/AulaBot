@@ -4,7 +4,7 @@ import com.example.ElAulaBot.domain.Estudiante;
 
 public class EstudianteDto {
 
-    private Integer idProfesor;
+    private Integer idEstudiante;
     private int chatId;
     private String celular;
     private String nombre;
@@ -12,20 +12,20 @@ public class EstudianteDto {
 
     public EstudianteDto(Estudiante estudiante) {}
 
-    public EstudianteDto(Integer idProfesor, int chatId, String celular, String nombre, int status) {
-        this.idProfesor = idProfesor;
+    public EstudianteDto(Integer idEstudiante, int chatId, String celular, String nombre, int status) {
+        this.idEstudiante = idEstudiante;
         this.chatId = chatId;
         this.celular = celular;
         this.nombre = nombre;
         this.status = status;
     }
 
-    public Integer getIdProfesor() {
-        return idProfesor;
+    public Integer getIdEstudiante() {
+        return idEstudiante;
     }
 
-    public void setIdProfesor(Integer idProfesor) {
-        this.idProfesor = idProfesor;
+    public void setIdEstudiante(Integer idEstudiante) {
+        this.idEstudiante = idEstudiante;
     }
 
     public int getChatId() {
