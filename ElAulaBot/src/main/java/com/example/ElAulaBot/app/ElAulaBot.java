@@ -4,6 +4,7 @@ import com.example.ElAulaBot.bl.ProfesorBl;
 import com.example.ElAulaBot.dao.ProfesorRepository;
 import com.example.ElAulaBot.domain.Profesor;
 import com.example.ElAulaBot.dto.ProfesorDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -18,15 +19,25 @@ import java.util.List;
 import static java.lang.Math.toIntExact;
 
 public class ElAulaBot extends TelegramLongPollingBot {
+
     ProfesorBl profesorBl;
+
+    public ElAulaBot(ProfesorBl profesorBl) {
+        this.profesorBl = profesorBl;
+    }
+
+    private String nombreU="Nombre de usuario";
+    private String apeU="Apellido de usuario";
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String message_text = update.getMessage().getText();
             long chat_id = update.getMessage().getChatId();
+            nombreU=update.getMessage().getFrom().getFirstName();
+            apeU=update.getMessage().getFrom().getLastName();
             if (update.getMessage().getText().equals("/start")) {
                 SendMessage message = new SendMessage()
                         .setChatId(chat_id)
-                        .setText("Hola : " + profesorBl.findProfesorById(1).toString());
+                        .setText("Bienvenido como desea registrarse : "+profesorBl.findAllProfesor().get(1).getCelular() );
                 InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
                 List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
                 List<InlineKeyboardButton> rowInline = new ArrayList<>();
@@ -42,8 +53,6 @@ public class ElAulaBot extends TelegramLongPollingBot {
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
-            } else {
-
             }
 
         } else if (update.hasCallbackQuery()) {
@@ -53,7 +62,8 @@ public class ElAulaBot extends TelegramLongPollingBot {
             long chat_id = update.getCallbackQuery().getMessage().getChatId();
 
             if (call_data.equals("profesor")) {
-                String answer = "Gracias por registrarte \"Nombre del usuario\" como profesor.";
+                String answer = "Gracias por registrarte "+nombreU +" "+apeU+" como profesor. ";
+                answer+= profesorBl.findProfesorById(1).getCelular();
                 EditMessageText new_message = new EditMessageText()
                         .setChatId(chat_id)
                         .setMessageId(toIntExact(message_id))
@@ -65,7 +75,7 @@ public class ElAulaBot extends TelegramLongPollingBot {
                 }
             }
             if (call_data.equals("estudiante")) {
-                String answer = "Gracias por registrarte \"Nombre del usuario\" como estudiante.";
+                String answer = "Gracias por registrarte "+nombreU +" "+apeU+" como estudiante.";
                 EditMessageText new_message = new EditMessageText()
                         .setChatId(chat_id)
                         .setMessageId(toIntExact(message_id))

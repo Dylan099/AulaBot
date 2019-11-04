@@ -1,17 +1,31 @@
 package com.example.ElAulaBot.app;
 
+import com.example.ElAulaBot.bl.ProfesorBl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-@SpringBootApplication
+import javax.annotation.PostConstruct;
+
+@Component
 public class ElAulaBotApplication {
 
-	public static void main(String[] args) {
+	ProfesorBl profesorBl;
 
-		SpringApplication.run(ElAulaBotApplication.class, args);
+	@Autowired
+	public ElAulaBotApplication(ProfesorBl profesorBl) {
+		this.profesorBl = profesorBl;
+	}
+
+	public ElAulaBotApplication() {
+	}
+
+	@PostConstruct
+	public void init() {
 
 		// TODO Initialize Api Context
 		ApiContextInitializer.init();
@@ -21,7 +35,7 @@ public class ElAulaBotApplication {
 
 		// TODO Register our bot
 		try {
-			botsApi.registerBot(new ElAulaBot());
+			botsApi.registerBot(new ElAulaBot(profesorBl));
 		} catch (TelegramApiException e) {
 			e.printStackTrace();
 		}

@@ -5,11 +5,13 @@ import com.example.ElAulaBot.domain.Profesor;
 import com.example.ElAulaBot.dto.ProfesorDto;
 import com.example.ElAulaBot.dto.Status;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class ProfesorBl {
     ProfesorRepository profesorRepository;
 
