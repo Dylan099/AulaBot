@@ -13,6 +13,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,9 +40,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Pregunta.findAll", query = "SELECT p FROM Pregunta p"),
     @NamedQuery(name = "Pregunta.findByIdPregunta", query = "SELECT p FROM Pregunta p WHERE p.idPregunta = :idPregunta"),
-    @NamedQuery(name = "Pregunta.findByTitulo", query = "SELECT p FROM Pregunta p WHERE p.titulo = :titulo"),
+    @NamedQuery(name = "Pregunta.findByEnunciado", query = "SELECT p FROM Pregunta p WHERE p.enunciado = :enunciado"),
     @NamedQuery(name = "Pregunta.findByPuntuacion", query = "SELECT p FROM Pregunta p WHERE p.puntuacion = :puntuacion"),
-    @NamedQuery(name = "Pregunta.findByFechaPublicacion", query = "SELECT p FROM Pregunta p WHERE p.fechaPublicacion = :fechaPublicacion"),
     @NamedQuery(name = "Pregunta.findByTxuser", query = "SELECT p FROM Pregunta p WHERE p.txuser = :txuser"),
     @NamedQuery(name = "Pregunta.findByTxhost", query = "SELECT p FROM Pregunta p WHERE p.txhost = :txhost"),
     @NamedQuery(name = "Pregunta.findByTxdate", query = "SELECT p FROM Pregunta p WHERE p.txdate = :txdate"),
@@ -57,24 +57,23 @@ public class Pregunta implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "titulo")
-    private String titulo;
+    @Column(name = "enunciado")
+    private String enunciado;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "puntuacion")
     private BigDecimal puntuacion;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "fechaPublicacion")
-    @Temporal(TemporalType.DATE)
-    private Date fechaPublicacion;
-    @Size(max = 50)
+    @Size(min = 1, max = 50)
     @Column(name = "txuser")
     private String txuser;
-    @Size(max = 50)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "txhost")
     private String txhost;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "txdate")
     @Temporal(TemporalType.DATE)
     private Date txdate;
@@ -82,10 +81,10 @@ public class Pregunta implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntaidPregunta")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntaidPregunta", fetch = FetchType.LAZY)
     private Collection<Respuesta> respuestaCollection;
     @JoinColumn(name = "Examen_idExamen", referencedColumnName = "idExamen")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Examen examenidExamen;
 
     public Pregunta() {
@@ -95,11 +94,12 @@ public class Pregunta implements Serializable {
         this.idPregunta = idPregunta;
     }
 
-    public Pregunta(Integer idPregunta, String titulo, BigDecimal puntuacion, Date fechaPublicacion, int status) {
+    public Pregunta(Integer idPregunta, String enunciado, String txuser, String txhost, Date txdate, int status) {
         this.idPregunta = idPregunta;
-        this.titulo = titulo;
-        this.puntuacion = puntuacion;
-        this.fechaPublicacion = fechaPublicacion;
+        this.enunciado = enunciado;
+        this.txuser = txuser;
+        this.txhost = txhost;
+        this.txdate = txdate;
         this.status = status;
     }
 
@@ -111,12 +111,12 @@ public class Pregunta implements Serializable {
         this.idPregunta = idPregunta;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public String getEnunciado() {
+        return enunciado;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public void setEnunciado(String enunciado) {
+        this.enunciado = enunciado;
     }
 
     public BigDecimal getPuntuacion() {
@@ -125,14 +125,6 @@ public class Pregunta implements Serializable {
 
     public void setPuntuacion(BigDecimal puntuacion) {
         this.puntuacion = puntuacion;
-    }
-
-    public Date getFechaPublicacion() {
-        return fechaPublicacion;
-    }
-
-    public void setFechaPublicacion(Date fechaPublicacion) {
-        this.fechaPublicacion = fechaPublicacion;
     }
 
     public String getTxuser() {

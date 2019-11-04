@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -46,12 +47,18 @@ public class CursoHasEstudiante implements Serializable {
     @Basic(optional = false)
     @Column(name = "idChe")
     private Integer idChe;
-    @Size(max = 50)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "txuser")
     private String txuser;
-    @Size(max = 50)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "txhost")
     private String txhost;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "txdate")
     @Temporal(TemporalType.DATE)
     private Date txdate;
@@ -60,10 +67,10 @@ public class CursoHasEstudiante implements Serializable {
     @Column(name = "status")
     private int status;
     @JoinColumn(name = "Curso_idCurso", referencedColumnName = "idCurso")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Curso cursoidCurso;
     @JoinColumn(name = "Estudiante_idEstudiante", referencedColumnName = "idEstudiante")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Estudiante estudianteidEstudiante;
 
     public CursoHasEstudiante() {
@@ -73,8 +80,11 @@ public class CursoHasEstudiante implements Serializable {
         this.idChe = idChe;
     }
 
-    public CursoHasEstudiante(Integer idChe, int status) {
+    public CursoHasEstudiante(Integer idChe, String txuser, String txhost, Date txdate, int status) {
         this.idChe = idChe;
+        this.txuser = txuser;
+        this.txhost = txhost;
+        this.txdate = txdate;
         this.status = status;
     }
 

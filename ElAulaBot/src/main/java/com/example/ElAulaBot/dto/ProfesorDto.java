@@ -7,8 +7,10 @@ public class ProfesorDto {
 
     private Integer idProfesor;
     private int chatId;
-    private String celular;
-    private String nombre;
+    private String celularPr;
+    private String primerNombrePr;
+    private String primerApellidoPr;
+    private String segundoApellidoPr;
     private int status;
 
     public ProfesorDto() {
@@ -18,8 +20,10 @@ public class ProfesorDto {
     public ProfesorDto(Profesor profesor) {
         this.idProfesor = profesor.getIdProfesor();
         this.chatId = profesor.getChatId();
-        this.celular = profesor.getCelular();
-        this.nombre = profesor.getNombre();
+        this.celularPr = profesor.getCelularPr();
+        this.primerNombrePr = profesor.getPrimerNombrePr();
+        this.primerApellidoPr = profesor.getPrimerApellidoPr();
+        this.segundoApellidoPr = profesor.getSegundoApellidoPr();
         this.status = profesor.getStatus();
     }
 
@@ -27,31 +31,27 @@ public class ProfesorDto {
         return idProfesor;
     }
 
-    public void setIdProfesor(Integer idProfesor) {
-        this.idProfesor = idProfesor;
-    }
-
     public int getChatId() {
         return chatId;
     }
 
-    public void setChatId(int chatId) {
-        this.chatId = chatId;
+    public String getCelularPr() {
+        return celularPr;
     }
 
-    public String getCelular() {
-        return celular;
+    public String getPrimerNombrePr() {
+        return primerNombrePr;
     }
 
-    public void setCelular(String celular) {
-        this.celular = celular;
+    public String getPrimerApellidoPr() {
+        return primerApellidoPr;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getSegundoApellidoPr() {
+        return segundoApellidoPr;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public int getStatus() {
+        return status;
     }
 }

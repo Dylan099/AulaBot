@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -30,33 +31,32 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author mirke
  */
 @Entity
-@Table(name = "anuncio")
+@Table(name = "archivo")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Anuncio.findAll", query = "SELECT a FROM Anuncio a"),
-    @NamedQuery(name = "Anuncio.findByIdAnuncio", query = "SELECT a FROM Anuncio a WHERE a.idAnuncio = :idAnuncio"),
-    @NamedQuery(name = "Anuncio.findByFechaPublicacionAn", query = "SELECT a FROM Anuncio a WHERE a.fechaPublicacionAn = :fechaPublicacionAn"),
-    @NamedQuery(name = "Anuncio.findByContenidoAn", query = "SELECT a FROM Anuncio a WHERE a.contenidoAn = :contenidoAn"),
-    @NamedQuery(name = "Anuncio.findByTxuser", query = "SELECT a FROM Anuncio a WHERE a.txuser = :txuser"),
-    @NamedQuery(name = "Anuncio.findByTxhost", query = "SELECT a FROM Anuncio a WHERE a.txhost = :txhost"),
-    @NamedQuery(name = "Anuncio.findByTxdate", query = "SELECT a FROM Anuncio a WHERE a.txdate = :txdate"),
-    @NamedQuery(name = "Anuncio.findByStatus", query = "SELECT a FROM Anuncio a WHERE a.status = :status")})
-public class Anuncio implements Serializable {
+    @NamedQuery(name = "Archivo.findAll", query = "SELECT a FROM Archivo a"),
+    @NamedQuery(name = "Archivo.findByIdArchivo", query = "SELECT a FROM Archivo a WHERE a.idArchivo = :idArchivo"),
+    @NamedQuery(name = "Archivo.findByFechaPublicacionAr", query = "SELECT a FROM Archivo a WHERE a.fechaPublicacionAr = :fechaPublicacionAr"),
+    @NamedQuery(name = "Archivo.findByTxuser", query = "SELECT a FROM Archivo a WHERE a.txuser = :txuser"),
+    @NamedQuery(name = "Archivo.findByTxhost", query = "SELECT a FROM Archivo a WHERE a.txhost = :txhost"),
+    @NamedQuery(name = "Archivo.findByTxdate", query = "SELECT a FROM Archivo a WHERE a.txdate = :txdate"),
+    @NamedQuery(name = "Archivo.findByStatus", query = "SELECT a FROM Archivo a WHERE a.status = :status")})
+public class Archivo implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idAnuncio")
-    private Integer idAnuncio;
+    @Column(name = "idArchivo")
+    private Integer idArchivo;
+    @Lob
+    @Column(name = "contenidoAr")
+    private byte[] contenidoAr;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "fechaPublicacionAn")
+    @Column(name = "fechaPublicacionAr")
     @Temporal(TemporalType.DATE)
-    private Date fechaPublicacionAn;
-    @Size(max = 200)
-    @Column(name = "contenidoAn")
-    private String contenidoAn;
+    private Date fechaPublicacionAr;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
@@ -80,44 +80,44 @@ public class Anuncio implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Curso cursoidCurso;
 
-    public Anuncio() {
+    public Archivo() {
     }
 
-    public Anuncio(Integer idAnuncio) {
-        this.idAnuncio = idAnuncio;
+    public Archivo(Integer idArchivo) {
+        this.idArchivo = idArchivo;
     }
 
-    public Anuncio(Integer idAnuncio, Date fechaPublicacionAn, String txuser, String txhost, Date txdate, int status) {
-        this.idAnuncio = idAnuncio;
-        this.fechaPublicacionAn = fechaPublicacionAn;
+    public Archivo(Integer idArchivo, Date fechaPublicacionAr, String txuser, String txhost, Date txdate, int status) {
+        this.idArchivo = idArchivo;
+        this.fechaPublicacionAr = fechaPublicacionAr;
         this.txuser = txuser;
         this.txhost = txhost;
         this.txdate = txdate;
         this.status = status;
     }
 
-    public Integer getIdAnuncio() {
-        return idAnuncio;
+    public Integer getIdArchivo() {
+        return idArchivo;
     }
 
-    public void setIdAnuncio(Integer idAnuncio) {
-        this.idAnuncio = idAnuncio;
+    public void setIdArchivo(Integer idArchivo) {
+        this.idArchivo = idArchivo;
     }
 
-    public Date getFechaPublicacionAn() {
-        return fechaPublicacionAn;
+    public byte[] getContenidoAr() {
+        return contenidoAr;
     }
 
-    public void setFechaPublicacionAn(Date fechaPublicacionAn) {
-        this.fechaPublicacionAn = fechaPublicacionAn;
+    public void setContenidoAr(byte[] contenidoAr) {
+        this.contenidoAr = contenidoAr;
     }
 
-    public String getContenidoAn() {
-        return contenidoAn;
+    public Date getFechaPublicacionAr() {
+        return fechaPublicacionAr;
     }
 
-    public void setContenidoAn(String contenidoAn) {
-        this.contenidoAn = contenidoAn;
+    public void setFechaPublicacionAr(Date fechaPublicacionAr) {
+        this.fechaPublicacionAr = fechaPublicacionAr;
     }
 
     public String getTxuser() {
@@ -163,18 +163,18 @@ public class Anuncio implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idAnuncio != null ? idAnuncio.hashCode() : 0);
+        hash += (idArchivo != null ? idArchivo.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Anuncio)) {
+        if (!(object instanceof Archivo)) {
             return false;
         }
-        Anuncio other = (Anuncio) object;
-        if ((this.idAnuncio == null && other.idAnuncio != null) || (this.idAnuncio != null && !this.idAnuncio.equals(other.idAnuncio))) {
+        Archivo other = (Archivo) object;
+        if ((this.idArchivo == null && other.idArchivo != null) || (this.idArchivo != null && !this.idArchivo.equals(other.idArchivo))) {
             return false;
         }
         return true;
@@ -182,7 +182,7 @@ public class Anuncio implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.ElAulaBot.domain.Anuncio[ idAnuncio=" + idAnuncio + " ]";
+        return "com.example.ElAulaBot.domain.Archivo[ idArchivo=" + idArchivo + " ]";
     }
     
 }

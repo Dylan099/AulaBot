@@ -6,50 +6,49 @@ public class EstudianteDto {
 
     private Integer idEstudiante;
     private int chatId;
-    private String celular;
-    private String nombre;
+    private String celularEs;
+    private String primerNombreEs;
+    private String primerApellidoEs;
+    private String segundoApellidoEs;
     private int status;
 
-    public EstudianteDto(Estudiante estudiante) {}
+    public EstudianteDto() {}
 
-    public EstudianteDto(Integer idEstudiante, int chatId, String celular, String nombre, int status) {
-        this.idEstudiante = idEstudiante;
-        this.chatId = chatId;
-        this.celular = celular;
-        this.nombre = nombre;
-        this.status = status;
+    public EstudianteDto(Estudiante estudiante) {
+        this.idEstudiante = estudiante.getIdEstudiante();
+        this.chatId = estudiante.getChatId();
+        this.celularEs = estudiante.getCelularEs();
+        this.primerNombreEs = estudiante.getPrimerNombreEs();
+        this.primerApellidoEs = estudiante.getPrimerApellidoEs();
+        this.segundoApellidoEs = estudiante.getSegundoApellidoEs();
+        this.status = estudiante.getStatus();
     }
 
     public Integer getIdEstudiante() {
         return idEstudiante;
     }
 
-    public void setIdEstudiante(Integer idEstudiante) {
-        this.idEstudiante = idEstudiante;
-    }
-
     public int getChatId() {
         return chatId;
     }
 
-    public void setChatId(int chatId) {
-        this.chatId = chatId;
+    public String getCelularEs() {
+        return celularEs;
     }
 
-    public String getCelular() {
-        return celular;
+    public String getPrimerNombreEs() {
+        return primerNombreEs;
     }
 
-    public void setCelular(String celular) {
-        this.celular = celular;
+    public String getPrimerApellidoEs() {
+        return primerApellidoEs;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getSegundoApellidoEs() {
+        return segundoApellidoEs;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public int getStatus() {
+        return status;
     }
-
 }

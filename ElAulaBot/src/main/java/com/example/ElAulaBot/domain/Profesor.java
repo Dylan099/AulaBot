@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,8 +38,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Profesor.findAll", query = "SELECT p FROM Profesor p"),
     @NamedQuery(name = "Profesor.findByIdProfesor", query = "SELECT p FROM Profesor p WHERE p.idProfesor = :idProfesor"),
     @NamedQuery(name = "Profesor.findByChatId", query = "SELECT p FROM Profesor p WHERE p.chatId = :chatId"),
-    @NamedQuery(name = "Profesor.findByCelular", query = "SELECT p FROM Profesor p WHERE p.celular = :celular"),
-    @NamedQuery(name = "Profesor.findByNombre", query = "SELECT p FROM Profesor p WHERE p.nombre = :nombre"),
+    @NamedQuery(name = "Profesor.findByPrimerNombrePr", query = "SELECT p FROM Profesor p WHERE p.primerNombrePr = :primerNombrePr"),
+    @NamedQuery(name = "Profesor.findByPrimerApellidoPr", query = "SELECT p FROM Profesor p WHERE p.primerApellidoPr = :primerApellidoPr"),
+    @NamedQuery(name = "Profesor.findBySegundoNombrePr", query = "SELECT p FROM Profesor p WHERE p.segundoNombrePr = :segundoNombrePr"),
+    @NamedQuery(name = "Profesor.findBySegundoApellidoPr", query = "SELECT p FROM Profesor p WHERE p.segundoApellidoPr = :segundoApellidoPr"),
+    @NamedQuery(name = "Profesor.findByCelularPr", query = "SELECT p FROM Profesor p WHERE p.celularPr = :celularPr"),
     @NamedQuery(name = "Profesor.findByTxuser", query = "SELECT p FROM Profesor p WHERE p.txuser = :txuser"),
     @NamedQuery(name = "Profesor.findByTxhost", query = "SELECT p FROM Profesor p WHERE p.txhost = :txhost"),
     @NamedQuery(name = "Profesor.findByTxdate", query = "SELECT p FROM Profesor p WHERE p.txdate = :txdate"),
@@ -58,19 +62,36 @@ public class Profesor implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "celular")
-    private String celular;
+    @Column(name = "primerNombrePr")
+    private String primerNombrePr;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 100)
-    @Column(name = "nombre")
-    private String nombre;
+    @Size(min = 1, max = 50)
+    @Column(name = "primerApellidoPr")
+    private String primerApellidoPr;
     @Size(max = 50)
+    @Column(name = "segundoNombrePr")
+    private String segundoNombrePr;
+    @Size(max = 50)
+    @Column(name = "segundoApellidoPr")
+    private String segundoApellidoPr;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "celularPr")
+    private String celularPr;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "txuser")
     private String txuser;
-    @Size(max = 50)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "txhost")
     private String txhost;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "txdate")
     @Temporal(TemporalType.DATE)
     private Date txdate;
@@ -78,7 +99,7 @@ public class Profesor implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profesoridProfesor")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profesoridProfesor", fetch = FetchType.LAZY)
     private Collection<Curso> cursoCollection;
 
     public Profesor() {
@@ -88,11 +109,15 @@ public class Profesor implements Serializable {
         this.idProfesor = idProfesor;
     }
 
-    public Profesor(Integer idProfesor, int chatId, String celular, String nombre, int status) {
+    public Profesor(Integer idProfesor, int chatId, String primerNombrePr, String primerApellidoPr, String celularPr, String txuser, String txhost, Date txdate, int status) {
         this.idProfesor = idProfesor;
         this.chatId = chatId;
-        this.celular = celular;
-        this.nombre = nombre;
+        this.primerNombrePr = primerNombrePr;
+        this.primerApellidoPr = primerApellidoPr;
+        this.celularPr = celularPr;
+        this.txuser = txuser;
+        this.txhost = txhost;
+        this.txdate = txdate;
         this.status = status;
     }
 
@@ -112,20 +137,44 @@ public class Profesor implements Serializable {
         this.chatId = chatId;
     }
 
-    public String getCelular() {
-        return celular;
+    public String getPrimerNombrePr() {
+        return primerNombrePr;
     }
 
-    public void setCelular(String celular) {
-        this.celular = celular;
+    public void setPrimerNombrePr(String primerNombrePr) {
+        this.primerNombrePr = primerNombrePr;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getPrimerApellidoPr() {
+        return primerApellidoPr;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setPrimerApellidoPr(String primerApellidoPr) {
+        this.primerApellidoPr = primerApellidoPr;
+    }
+
+    public String getSegundoNombrePr() {
+        return segundoNombrePr;
+    }
+
+    public void setSegundoNombrePr(String segundoNombrePr) {
+        this.segundoNombrePr = segundoNombrePr;
+    }
+
+    public String getSegundoApellidoPr() {
+        return segundoApellidoPr;
+    }
+
+    public void setSegundoApellidoPr(String segundoApellidoPr) {
+        this.segundoApellidoPr = segundoApellidoPr;
+    }
+
+    public String getCelularPr() {
+        return celularPr;
+    }
+
+    public void setCelularPr(String celularPr) {
+        this.celularPr = celularPr;
     }
 
     public String getTxuser() {
@@ -191,16 +240,7 @@ public class Profesor implements Serializable {
 
     @Override
     public String toString() {
-        return "Profesor{" +
-                "idProfesor=" + idProfesor +
-                ", chatId=" + chatId +
-                ", celular='" + celular + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", txuser='" + txuser + '\'' +
-                ", txhost='" + txhost + '\'' +
-                ", txdate=" + txdate +
-                ", status=" + status +
-                ", cursoCollection=" + cursoCollection +
-                '}';
+        return "com.example.ElAulaBot.domain.Profesor[ idProfesor=" + idProfesor + " ]";
     }
+    
 }

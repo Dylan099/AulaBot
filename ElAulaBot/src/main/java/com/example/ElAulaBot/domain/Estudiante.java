@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,8 +38,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Estudiante.findAll", query = "SELECT e FROM Estudiante e"),
     @NamedQuery(name = "Estudiante.findByIdEstudiante", query = "SELECT e FROM Estudiante e WHERE e.idEstudiante = :idEstudiante"),
     @NamedQuery(name = "Estudiante.findByChatId", query = "SELECT e FROM Estudiante e WHERE e.chatId = :chatId"),
-    @NamedQuery(name = "Estudiante.findByCelular", query = "SELECT e FROM Estudiante e WHERE e.celular = :celular"),
-    @NamedQuery(name = "Estudiante.findByNombre", query = "SELECT e FROM Estudiante e WHERE e.nombre = :nombre"),
+    @NamedQuery(name = "Estudiante.findByCelularEs", query = "SELECT e FROM Estudiante e WHERE e.celularEs = :celularEs"),
+    @NamedQuery(name = "Estudiante.findByPrimerNombreEs", query = "SELECT e FROM Estudiante e WHERE e.primerNombreEs = :primerNombreEs"),
+    @NamedQuery(name = "Estudiante.findByPrimerApellidoEs", query = "SELECT e FROM Estudiante e WHERE e.primerApellidoEs = :primerApellidoEs"),
+    @NamedQuery(name = "Estudiante.findBySegundoNombreEs", query = "SELECT e FROM Estudiante e WHERE e.segundoNombreEs = :segundoNombreEs"),
+    @NamedQuery(name = "Estudiante.findBySegundoApellidoEs", query = "SELECT e FROM Estudiante e WHERE e.segundoApellidoEs = :segundoApellidoEs"),
     @NamedQuery(name = "Estudiante.findByTxuser", query = "SELECT e FROM Estudiante e WHERE e.txuser = :txuser"),
     @NamedQuery(name = "Estudiante.findByTxhost", query = "SELECT e FROM Estudiante e WHERE e.txhost = :txhost"),
     @NamedQuery(name = "Estudiante.findByTxdate", query = "SELECT e FROM Estudiante e WHERE e.txdate = :txdate"),
@@ -58,19 +62,36 @@ public class Estudiante implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "celular")
-    private String celular;
+    @Column(name = "celularEs")
+    private String celularEs;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "nombre")
-    private String nombre;
+    @Column(name = "primerNombreEs")
+    private String primerNombreEs;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "primerApellidoEs")
+    private String primerApellidoEs;
     @Size(max = 50)
+    @Column(name = "segundoNombreEs")
+    private String segundoNombreEs;
+    @Size(max = 50)
+    @Column(name = "segundoApellidoEs")
+    private String segundoApellidoEs;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "txuser")
     private String txuser;
-    @Size(max = 50)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "txhost")
     private String txhost;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "txdate")
     @Temporal(TemporalType.DATE)
     private Date txdate;
@@ -78,7 +99,7 @@ public class Estudiante implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudianteidEstudiante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudianteidEstudiante", fetch = FetchType.LAZY)
     private Collection<CursoHasEstudiante> cursoHasEstudianteCollection;
 
     public Estudiante() {
@@ -88,11 +109,15 @@ public class Estudiante implements Serializable {
         this.idEstudiante = idEstudiante;
     }
 
-    public Estudiante(Integer idEstudiante, int chatId, String celular, String nombre, int status) {
+    public Estudiante(Integer idEstudiante, int chatId, String celularEs, String primerNombreEs, String primerApellidoEs, String txuser, String txhost, Date txdate, int status) {
         this.idEstudiante = idEstudiante;
         this.chatId = chatId;
-        this.celular = celular;
-        this.nombre = nombre;
+        this.celularEs = celularEs;
+        this.primerNombreEs = primerNombreEs;
+        this.primerApellidoEs = primerApellidoEs;
+        this.txuser = txuser;
+        this.txhost = txhost;
+        this.txdate = txdate;
         this.status = status;
     }
 
@@ -112,20 +137,44 @@ public class Estudiante implements Serializable {
         this.chatId = chatId;
     }
 
-    public String getCelular() {
-        return celular;
+    public String getCelularEs() {
+        return celularEs;
     }
 
-    public void setCelular(String celular) {
-        this.celular = celular;
+    public void setCelularEs(String celularEs) {
+        this.celularEs = celularEs;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getPrimerNombreEs() {
+        return primerNombreEs;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setPrimerNombreEs(String primerNombreEs) {
+        this.primerNombreEs = primerNombreEs;
+    }
+
+    public String getPrimerApellidoEs() {
+        return primerApellidoEs;
+    }
+
+    public void setPrimerApellidoEs(String primerApellidoEs) {
+        this.primerApellidoEs = primerApellidoEs;
+    }
+
+    public String getSegundoNombreEs() {
+        return segundoNombreEs;
+    }
+
+    public void setSegundoNombreEs(String segundoNombreEs) {
+        this.segundoNombreEs = segundoNombreEs;
+    }
+
+    public String getSegundoApellidoEs() {
+        return segundoApellidoEs;
+    }
+
+    public void setSegundoApellidoEs(String segundoApellidoEs) {
+        this.segundoApellidoEs = segundoApellidoEs;
     }
 
     public String getTxuser() {
@@ -189,19 +238,9 @@ public class Estudiante implements Serializable {
         return true;
     }
 
-
     @Override
     public String toString() {
-        return "Estudiante{" +
-                "idEstudiante=" + idEstudiante +
-                ", chatId=" + chatId +
-                ", celular='" + celular + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", txuser='" + txuser + '\'' +
-                ", txhost='" + txhost + '\'' +
-                ", txdate=" + txdate +
-                ", status=" + status +
-                '}';
+        return "com.example.ElAulaBot.domain.Estudiante[ idEstudiante=" + idEstudiante + " ]";
     }
     
 }

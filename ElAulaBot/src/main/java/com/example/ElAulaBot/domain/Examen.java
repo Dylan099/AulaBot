@@ -13,6 +13,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -41,7 +42,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Examen.findByIdExamen", query = "SELECT e FROM Examen e WHERE e.idExamen = :idExamen"),
     @NamedQuery(name = "Examen.findByTitulo", query = "SELECT e FROM Examen e WHERE e.titulo = :titulo"),
     @NamedQuery(name = "Examen.findByPuntuacion", query = "SELECT e FROM Examen e WHERE e.puntuacion = :puntuacion"),
-    @NamedQuery(name = "Examen.findByFechaPublicacion", query = "SELECT e FROM Examen e WHERE e.fechaPublicacion = :fechaPublicacion"),
+    @NamedQuery(name = "Examen.findByFechaPublicacionEx", query = "SELECT e FROM Examen e WHERE e.fechaPublicacionEx = :fechaPublicacionEx"),
     @NamedQuery(name = "Examen.findByTxuser", query = "SELECT e FROM Examen e WHERE e.txuser = :txuser"),
     @NamedQuery(name = "Examen.findByTxhost", query = "SELECT e FROM Examen e WHERE e.txhost = :txhost"),
     @NamedQuery(name = "Examen.findByTxdate", query = "SELECT e FROM Examen e WHERE e.txdate = :txdate"),
@@ -54,27 +55,29 @@ public class Examen implements Serializable {
     @Basic(optional = false)
     @Column(name = "idExamen")
     private Integer idExamen;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 100)
+    @Size(max = 100)
     @Column(name = "titulo")
     private String titulo;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "puntuacion")
     private BigDecimal puntuacion;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "fechaPublicacion")
+    @Column(name = "fechaPublicacionEx")
     @Temporal(TemporalType.DATE)
-    private Date fechaPublicacion;
-    @Size(max = 50)
+    private Date fechaPublicacionEx;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "txuser")
     private String txuser;
-    @Size(max = 50)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "txhost")
     private String txhost;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "txdate")
     @Temporal(TemporalType.DATE)
     private Date txdate;
@@ -83,9 +86,9 @@ public class Examen implements Serializable {
     @Column(name = "status")
     private int status;
     @JoinColumn(name = "Curso_idCurso", referencedColumnName = "idCurso")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Curso cursoidCurso;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "examenidExamen")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "examenidExamen", fetch = FetchType.LAZY)
     private Collection<Pregunta> preguntaCollection;
 
     public Examen() {
@@ -95,11 +98,12 @@ public class Examen implements Serializable {
         this.idExamen = idExamen;
     }
 
-    public Examen(Integer idExamen, String titulo, BigDecimal puntuacion, Date fechaPublicacion, int status) {
+    public Examen(Integer idExamen, Date fechaPublicacionEx, String txuser, String txhost, Date txdate, int status) {
         this.idExamen = idExamen;
-        this.titulo = titulo;
-        this.puntuacion = puntuacion;
-        this.fechaPublicacion = fechaPublicacion;
+        this.fechaPublicacionEx = fechaPublicacionEx;
+        this.txuser = txuser;
+        this.txhost = txhost;
+        this.txdate = txdate;
         this.status = status;
     }
 
@@ -127,12 +131,12 @@ public class Examen implements Serializable {
         this.puntuacion = puntuacion;
     }
 
-    public Date getFechaPublicacion() {
-        return fechaPublicacion;
+    public Date getFechaPublicacionEx() {
+        return fechaPublicacionEx;
     }
 
-    public void setFechaPublicacion(Date fechaPublicacion) {
-        this.fechaPublicacion = fechaPublicacion;
+    public void setFechaPublicacionEx(Date fechaPublicacionEx) {
+        this.fechaPublicacionEx = fechaPublicacionEx;
     }
 
     public String getTxuser() {

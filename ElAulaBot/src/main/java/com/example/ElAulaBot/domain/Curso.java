@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,8 +39,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Curso.findAll", query = "SELECT c FROM Curso c"),
     @NamedQuery(name = "Curso.findByIdCurso", query = "SELECT c FROM Curso c WHERE c.idCurso = :idCurso"),
-    @NamedQuery(name = "Curso.findByFechaCreacion", query = "SELECT c FROM Curso c WHERE c.fechaCreacion = :fechaCreacion"),
-    @NamedQuery(name = "Curso.findByNombre", query = "SELECT c FROM Curso c WHERE c.nombre = :nombre"),
+    @NamedQuery(name = "Curso.findByFechaCreacionCu", query = "SELECT c FROM Curso c WHERE c.fechaCreacionCu = :fechaCreacionCu"),
+    @NamedQuery(name = "Curso.findByNombreCurso", query = "SELECT c FROM Curso c WHERE c.nombreCurso = :nombreCurso"),
     @NamedQuery(name = "Curso.findByCodigoCurso", query = "SELECT c FROM Curso c WHERE c.codigoCurso = :codigoCurso"),
     @NamedQuery(name = "Curso.findByTxuser", query = "SELECT c FROM Curso c WHERE c.txuser = :txuser"),
     @NamedQuery(name = "Curso.findByTxhost", query = "SELECT c FROM Curso c WHERE c.txhost = :txhost"),
@@ -56,13 +57,13 @@ public class Curso implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "fechaCreacion")
-    private String fechaCreacion;
+    @Column(name = "fechaCreacionCu")
+    private String fechaCreacionCu;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "nombre")
-    private String nombre;
+    @Column(name = "nombreCurso")
+    private String nombreCurso;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -79,17 +80,18 @@ public class Curso implements Serializable {
     private Date txdate;
     @Column(name = "status")
     private Integer status;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoidCurso")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoidCurso", fetch = FetchType.LAZY)
+    private Collection<Archivo> archivoCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoidCurso", fetch = FetchType.LAZY)
     private Collection<Horario> horarioCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoidCurso")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoidCurso", fetch = FetchType.LAZY)
     private Collection<Anuncio> anuncioCollection;
     @JoinColumn(name = "Profesor_idProfesor", referencedColumnName = "idProfesor")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Profesor profesoridProfesor;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoidCurso")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoidCurso", fetch = FetchType.LAZY)
     private Collection<CursoHasEstudiante> cursoHasEstudianteCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoidCurso")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoidCurso", fetch = FetchType.LAZY)
     private Collection<Examen> examenCollection;
 
     public Curso() {
@@ -99,10 +101,10 @@ public class Curso implements Serializable {
         this.idCurso = idCurso;
     }
 
-    public Curso(Integer idCurso, String fechaCreacion, String nombre, String codigoCurso) {
+    public Curso(Integer idCurso, String fechaCreacionCu, String nombreCurso, String codigoCurso) {
         this.idCurso = idCurso;
-        this.fechaCreacion = fechaCreacion;
-        this.nombre = nombre;
+        this.fechaCreacionCu = fechaCreacionCu;
+        this.nombreCurso = nombreCurso;
         this.codigoCurso = codigoCurso;
     }
 
@@ -114,20 +116,20 @@ public class Curso implements Serializable {
         this.idCurso = idCurso;
     }
 
-    public String getFechaCreacion() {
-        return fechaCreacion;
+    public String getFechaCreacionCu() {
+        return fechaCreacionCu;
     }
 
-    public void setFechaCreacion(String fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
+    public void setFechaCreacionCu(String fechaCreacionCu) {
+        this.fechaCreacionCu = fechaCreacionCu;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreCurso() {
+        return nombreCurso;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreCurso(String nombreCurso) {
+        this.nombreCurso = nombreCurso;
     }
 
     public String getCodigoCurso() {
@@ -170,7 +172,14 @@ public class Curso implements Serializable {
         this.status = status;
     }
 
+    @XmlTransient
+    public Collection<Archivo> getArchivoCollection() {
+        return archivoCollection;
+    }
 
+    public void setArchivoCollection(Collection<Archivo> archivoCollection) {
+        this.archivoCollection = archivoCollection;
+    }
 
     @XmlTransient
     public Collection<Horario> getHorarioCollection() {

@@ -37,7 +37,8 @@ public class ElAulaBot extends TelegramLongPollingBot {
             if (update.getMessage().getText().equals("/start")) {
                 SendMessage message = new SendMessage()
                         .setChatId(chat_id)
-                        .setText("Bienvenido como desea registrarse : "+profesorBl.findAllProfesor().get(1).getCelular() );
+                        .setText("Bienvenido como desea registrarse : "+profesorBl.findAllProfesor().get(1).getCelularPr() );
+                System.out.println(profesorBl.findAllProfesor().get(1).getCelularPr());
                 InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
                 List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
                 List<InlineKeyboardButton> rowInline = new ArrayList<>();
@@ -63,7 +64,8 @@ public class ElAulaBot extends TelegramLongPollingBot {
 
             if (call_data.equals("profesor")) {
                 String answer = "Gracias por registrarte "+nombreU +" "+apeU+" como profesor. ";
-                answer+= profesorBl.findProfesorById(1).getCelular();
+
+                answer+= profesorBl.findAllProfesor().get(1).getCelularPr();
                 EditMessageText new_message = new EditMessageText()
                         .setChatId(chat_id)
                         .setMessageId(toIntExact(message_id))

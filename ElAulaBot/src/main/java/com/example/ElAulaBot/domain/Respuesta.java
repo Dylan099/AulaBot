@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,7 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Respuesta.findAll", query = "SELECT r FROM Respuesta r"),
     @NamedQuery(name = "Respuesta.findByIdRespuesta", query = "SELECT r FROM Respuesta r WHERE r.idRespuesta = :idRespuesta"),
-    @NamedQuery(name = "Respuesta.findByEnunciado", query = "SELECT r FROM Respuesta r WHERE r.enunciado = :enunciado"),
+    @NamedQuery(name = "Respuesta.findByEnunciadoRe", query = "SELECT r FROM Respuesta r WHERE r.enunciadoRe = :enunciadoRe"),
     @NamedQuery(name = "Respuesta.findByCorrecto", query = "SELECT r FROM Respuesta r WHERE r.correcto = :correcto"),
     @NamedQuery(name = "Respuesta.findByTxuser", query = "SELECT r FROM Respuesta r WHERE r.txuser = :txuser"),
     @NamedQuery(name = "Respuesta.findByTxhost", query = "SELECT r FROM Respuesta r WHERE r.txhost = :txhost"),
@@ -51,18 +52,24 @@ public class Respuesta implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
-    @Column(name = "enunciado")
-    private String enunciado;
+    @Column(name = "enunciadoRe")
+    private String enunciadoRe;
     @Basic(optional = false)
     @NotNull
     @Column(name = "correcto")
     private boolean correcto;
-    @Size(max = 50)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "txuser")
     private String txuser;
-    @Size(max = 50)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "txhost")
     private String txhost;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "txdate")
     @Temporal(TemporalType.DATE)
     private Date txdate;
@@ -71,7 +78,7 @@ public class Respuesta implements Serializable {
     @Column(name = "status")
     private int status;
     @JoinColumn(name = "Pregunta_idPregunta", referencedColumnName = "idPregunta")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Pregunta preguntaidPregunta;
 
     public Respuesta() {
@@ -81,10 +88,13 @@ public class Respuesta implements Serializable {
         this.idRespuesta = idRespuesta;
     }
 
-    public Respuesta(Integer idRespuesta, String enunciado, boolean correcto, int status) {
+    public Respuesta(Integer idRespuesta, String enunciadoRe, boolean correcto, String txuser, String txhost, Date txdate, int status) {
         this.idRespuesta = idRespuesta;
-        this.enunciado = enunciado;
+        this.enunciadoRe = enunciadoRe;
         this.correcto = correcto;
+        this.txuser = txuser;
+        this.txhost = txhost;
+        this.txdate = txdate;
         this.status = status;
     }
 
@@ -96,12 +106,12 @@ public class Respuesta implements Serializable {
         this.idRespuesta = idRespuesta;
     }
 
-    public String getEnunciado() {
-        return enunciado;
+    public String getEnunciadoRe() {
+        return enunciadoRe;
     }
 
-    public void setEnunciado(String enunciado) {
-        this.enunciado = enunciado;
+    public void setEnunciadoRe(String enunciadoRe) {
+        this.enunciadoRe = enunciadoRe;
     }
 
     public boolean getCorrecto() {

@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,6 +37,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Horario.findByIdHorario", query = "SELECT h FROM Horario h WHERE h.idHorario = :idHorario"),
     @NamedQuery(name = "Horario.findByHoraEntrada", query = "SELECT h FROM Horario h WHERE h.horaEntrada = :horaEntrada"),
     @NamedQuery(name = "Horario.findByHoraSalida", query = "SELECT h FROM Horario h WHERE h.horaSalida = :horaSalida"),
+    @NamedQuery(name = "Horario.findByDia", query = "SELECT h FROM Horario h WHERE h.dia = :dia"),
     @NamedQuery(name = "Horario.findByTxuser", query = "SELECT h FROM Horario h WHERE h.txuser = :txuser"),
     @NamedQuery(name = "Horario.findByTxhost", query = "SELECT h FROM Horario h WHERE h.txhost = :txhost"),
     @NamedQuery(name = "Horario.findByTxdate", query = "SELECT h FROM Horario h WHERE h.txdate = :txdate"),
@@ -50,20 +52,29 @@ public class Horario implements Serializable {
     private Integer idHorario;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "horaEntrada")
-    @Temporal(TemporalType.TIME)
-    private Date horaEntrada;
+    private String horaEntrada;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "horaSalida")
-    @Temporal(TemporalType.TIME)
-    private Date horaSalida;
+    private String horaSalida;
     @Size(max = 50)
+    @Column(name = "dia")
+    private String dia;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "txuser")
     private String txuser;
-    @Size(max = 50)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
     @Column(name = "txhost")
     private String txhost;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "txdate")
     @Temporal(TemporalType.DATE)
     private Date txdate;
@@ -72,7 +83,7 @@ public class Horario implements Serializable {
     @Column(name = "status")
     private int status;
     @JoinColumn(name = "Curso_idCurso", referencedColumnName = "idCurso")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Curso cursoidCurso;
 
     public Horario() {
@@ -82,10 +93,13 @@ public class Horario implements Serializable {
         this.idHorario = idHorario;
     }
 
-    public Horario(Integer idHorario, Date horaEntrada, Date horaSalida, int status) {
+    public Horario(Integer idHorario, String horaEntrada, String horaSalida, String txuser, String txhost, Date txdate, int status) {
         this.idHorario = idHorario;
         this.horaEntrada = horaEntrada;
         this.horaSalida = horaSalida;
+        this.txuser = txuser;
+        this.txhost = txhost;
+        this.txdate = txdate;
         this.status = status;
     }
 
@@ -97,20 +111,28 @@ public class Horario implements Serializable {
         this.idHorario = idHorario;
     }
 
-    public Date getHoraEntrada() {
+    public String getHoraEntrada() {
         return horaEntrada;
     }
 
-    public void setHoraEntrada(Date horaEntrada) {
+    public void setHoraEntrada(String horaEntrada) {
         this.horaEntrada = horaEntrada;
     }
 
-    public Date getHoraSalida() {
+    public String getHoraSalida() {
         return horaSalida;
     }
 
-    public void setHoraSalida(Date horaSalida) {
+    public void setHoraSalida(String horaSalida) {
         this.horaSalida = horaSalida;
+    }
+
+    public String getDia() {
+        return dia;
+    }
+
+    public void setDia(String dia) {
+        this.dia = dia;
     }
 
     public String getTxuser() {
