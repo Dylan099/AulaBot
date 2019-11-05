@@ -2,6 +2,9 @@ package com.example.ElAulaBot.dto;
 
 
 import com.example.ElAulaBot.domain.Profesor;
+import org.checkerframework.checker.units.qual.C;
+
+import java.util.List;
 
 public class ProfesorDto {
 
@@ -12,6 +15,8 @@ public class ProfesorDto {
     private String primerApellidoPr;
     private String segundoApellidoPr;
     private int status;
+
+    private List<CursoDto> cursoList;
 
     public ProfesorDto() {
 
@@ -53,5 +58,41 @@ public class ProfesorDto {
 
     public int getStatus() {
         return status;
+    }
+
+    public void setIdProfesor(Integer idProfesor) {
+        this.idProfesor = idProfesor;
+    }
+
+    public void setChatId(int chatId) {
+        this.chatId = chatId;
+    }
+
+    public void setCelularPr(String celularPr) {
+        this.celularPr = celularPr;
+    }
+
+    public void setPrimerNombrePr(String primerNombrePr) {
+        this.primerNombrePr = primerNombrePr;
+    }
+
+    public void setPrimerApellidoPr(String primerApellidoPr) {
+        this.primerApellidoPr = primerApellidoPr;
+    }
+
+    public void setSegundoApellidoPr(String segundoApellidoPr) {
+        this.segundoApellidoPr = segundoApellidoPr;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public void setCursoList(List<CursoDto> cursoList) {
+        this.cursoList = cursoList;
+    }
+
+    public List<CursoDto> getCursoList() {
+        return cursoList;
     }
 }
