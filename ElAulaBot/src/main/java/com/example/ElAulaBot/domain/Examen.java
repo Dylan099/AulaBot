@@ -53,7 +53,7 @@ public class Examen implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idExamen")
+    @Column(name = "id_examen")
     private Integer idExamen;
     @Size(max = 100)
     @Column(name = "titulo")
@@ -63,7 +63,7 @@ public class Examen implements Serializable {
     private BigDecimal puntuacion;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "fechaPublicacionEx")
+    @Column(name = "fecha_publicacion_ex")
     @Temporal(TemporalType.DATE)
     private Date fechaPublicacionEx;
     @Basic(optional = false)
@@ -85,10 +85,10 @@ public class Examen implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @JoinColumn(name = "Curso_idCurso", referencedColumnName = "idCurso")
+    @JoinColumn(name = "curso_id_curso", referencedColumnName = "id_curso")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Curso cursoidCurso;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "examenidExamen", fetch = FetchType.LAZY)
+    private Curso cursoIdCurso;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "examenIdExamen", fetch = FetchType.LAZY)
     private Collection<Pregunta> preguntaCollection;
 
     public Examen() {
@@ -171,12 +171,12 @@ public class Examen implements Serializable {
         this.status = status;
     }
 
-    public Curso getCursoidCurso() {
-        return cursoidCurso;
+    public Curso getCursoIdCurso() {
+        return cursoIdCurso;
     }
 
-    public void setCursoidCurso(Curso cursoidCurso) {
-        this.cursoidCurso = cursoidCurso;
+    public void setCursoIdCurso(Curso cursoIdCurso) {
+        this.cursoIdCurso = cursoIdCurso;
     }
 
     @XmlTransient

@@ -52,7 +52,7 @@ public class Pregunta implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idPregunta")
+    @Column(name = "id_pregunta")
     private Integer idPregunta;
     @Basic(optional = false)
     @NotNull
@@ -81,11 +81,11 @@ public class Pregunta implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntaidPregunta", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntaIdPregunta", fetch = FetchType.LAZY)
     private Collection<Respuesta> respuestaCollection;
-    @JoinColumn(name = "Examen_idExamen", referencedColumnName = "idExamen")
+    @JoinColumn(name = "examen_id_examen", referencedColumnName = "id_examen")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Examen examenidExamen;
+    private Examen examenIdExamen;
 
     public Pregunta() {
     }
@@ -168,12 +168,12 @@ public class Pregunta implements Serializable {
         this.respuestaCollection = respuestaCollection;
     }
 
-    public Examen getExamenidExamen() {
-        return examenidExamen;
+    public Examen getExamenIdExamen() {
+        return examenIdExamen;
     }
 
-    public void setExamenidExamen(Examen examenidExamen) {
-        this.examenidExamen = examenidExamen;
+    public void setExamenIdExamen(Examen examenIdExamen) {
+        this.examenIdExamen = examenIdExamen;
     }
 
     @Override

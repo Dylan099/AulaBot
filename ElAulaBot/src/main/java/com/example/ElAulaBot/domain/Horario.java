@@ -48,17 +48,17 @@ public class Horario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idHorario")
+    @Column(name = "id_horario")
     private Integer idHorario;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "horaEntrada")
+    @Column(name = "hora_entrada")
     private String horaEntrada;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "horaSalida")
+    @Column(name = "hora_salida")
     private String horaSalida;
     @Size(max = 50)
     @Column(name = "dia")
@@ -82,9 +82,9 @@ public class Horario implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @JoinColumn(name = "Curso_idCurso", referencedColumnName = "idCurso")
+    @JoinColumn(name = "curso_id_curso", referencedColumnName = "id_curso")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Curso cursoidCurso;
+    private Curso cursoIdCurso;
 
     public Horario() {
     }
@@ -167,12 +167,12 @@ public class Horario implements Serializable {
         this.status = status;
     }
 
-    public Curso getCursoidCurso() {
-        return cursoidCurso;
+    public Curso getCursoIdCurso() {
+        return cursoIdCurso;
     }
 
-    public void setCursoidCurso(Curso cursoidCurso) {
-        this.cursoidCurso = cursoidCurso;
+    public void setCursoIdCurso(Curso cursoIdCurso) {
+        this.cursoIdCurso = cursoIdCurso;
     }
 
     @Override

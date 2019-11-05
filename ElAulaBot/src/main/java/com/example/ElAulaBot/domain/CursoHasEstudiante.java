@@ -45,7 +45,7 @@ public class CursoHasEstudiante implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idChe")
+    @Column(name = "id_che")
     private Integer idChe;
     @Basic(optional = false)
     @NotNull
@@ -66,12 +66,12 @@ public class CursoHasEstudiante implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @JoinColumn(name = "Curso_idCurso", referencedColumnName = "idCurso")
+    @JoinColumn(name = "curso_id_curso", referencedColumnName = "id_curso")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Curso cursoidCurso;
-    @JoinColumn(name = "Estudiante_idEstudiante", referencedColumnName = "idEstudiante")
+    private Curso cursoIdCurso;
+    @JoinColumn(name = "estudiante_id_estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Estudiante estudianteidEstudiante;
+    private Estudiante estudianteIdEstudiante;
 
     public CursoHasEstudiante() {
     }
@@ -128,20 +128,20 @@ public class CursoHasEstudiante implements Serializable {
         this.status = status;
     }
 
-    public Curso getCursoidCurso() {
-        return cursoidCurso;
+    public Curso getCursoIdCurso() {
+        return cursoIdCurso;
     }
 
-    public void setCursoidCurso(Curso cursoidCurso) {
-        this.cursoidCurso = cursoidCurso;
+    public void setCursoIdCurso(Curso cursoIdCurso) {
+        this.cursoIdCurso = cursoIdCurso;
     }
 
-    public Estudiante getEstudianteidEstudiante() {
-        return estudianteidEstudiante;
+    public Estudiante getEstudianteIdEstudiante() {
+        return estudianteIdEstudiante;
     }
 
-    public void setEstudianteidEstudiante(Estudiante estudianteidEstudiante) {
-        this.estudianteidEstudiante = estudianteidEstudiante;
+    public void setEstudianteIdEstudiante(Estudiante estudianteIdEstudiante) {
+        this.estudianteIdEstudiante = estudianteIdEstudiante;
     }
 
     @Override

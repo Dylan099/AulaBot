@@ -47,15 +47,15 @@ public class Anuncio implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idAnuncio")
+    @Column(name = "id_anuncio")
     private Integer idAnuncio;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "fechaPublicacionAn")
+    @Column(name = "fecha_publicacion_an")
     @Temporal(TemporalType.DATE)
     private Date fechaPublicacionAn;
     @Size(max = 200)
-    @Column(name = "contenidoAn")
+    @Column(name = "contenido_an")
     private String contenidoAn;
     @Basic(optional = false)
     @NotNull
@@ -76,9 +76,9 @@ public class Anuncio implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @JoinColumn(name = "Curso_idCurso", referencedColumnName = "idCurso")
+    @JoinColumn(name = "curso_id_curso", referencedColumnName = "id_curso")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Curso cursoidCurso;
+    private Curso cursoIdCurso;
 
     public Anuncio() {
     }
@@ -152,12 +152,12 @@ public class Anuncio implements Serializable {
         this.status = status;
     }
 
-    public Curso getCursoidCurso() {
-        return cursoidCurso;
+    public Curso getCursoIdCurso() {
+        return cursoIdCurso;
     }
 
-    public void setCursoidCurso(Curso cursoidCurso) {
-        this.cursoidCurso = cursoidCurso;
+    public void setCursoIdCurso(Curso cursoIdCurso) {
+        this.cursoIdCurso = cursoIdCurso;
     }
 
     @Override

@@ -28,6 +28,6 @@ public class CursoController {
     List<CursoDto>all(){
         return cursoBl.findAllCurso();
     }
-
+              
 
 }

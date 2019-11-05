@@ -52,22 +52,22 @@ public class Curso implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idCurso")
+    @Column(name = "id_curso")
     private Integer idCurso;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "fechaCreacionCu")
+    @Column(name = "fecha_creacion_cu")
     private String fechaCreacionCu;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "nombreCurso")
+    @Column(name = "nombre_curso")
     private String nombreCurso;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "codigoCurso")
+    @Column(name = "codigo_curso")
     private String codigoCurso;
     @Size(max = 50)
     @Column(name = "txuser")
@@ -80,18 +80,18 @@ public class Curso implements Serializable {
     private Date txdate;
     @Column(name = "status")
     private Integer status;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoidCurso", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
     private Collection<Archivo> archivoCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoidCurso", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
     private Collection<Horario> horarioCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoidCurso", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
     private Collection<Anuncio> anuncioCollection;
-    @JoinColumn(name = "Profesor_idProfesor", referencedColumnName = "idProfesor")
+    @JoinColumn(name = "profesor_id_profesor", referencedColumnName = "id_profesor")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Profesor profesoridProfesor;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoidCurso", fetch = FetchType.LAZY)
+    private Profesor profesorIdProfesor;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
     private Collection<CursoHasEstudiante> cursoHasEstudianteCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoidCurso", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
     private Collection<Examen> examenCollection;
 
     public Curso() {
@@ -199,12 +199,12 @@ public class Curso implements Serializable {
         this.anuncioCollection = anuncioCollection;
     }
 
-    public Profesor getProfesoridProfesor() {
-        return profesoridProfesor;
+    public Profesor getProfesorIdProfesor() {
+        return profesorIdProfesor;
     }
 
-    public void setProfesoridProfesor(Profesor profesoridProfesor) {
-        this.profesoridProfesor = profesoridProfesor;
+    public void setProfesorIdProfesor(Profesor profesorIdProfesor) {
+        this.profesorIdProfesor = profesorIdProfesor;
     }
 
     @XmlTransient

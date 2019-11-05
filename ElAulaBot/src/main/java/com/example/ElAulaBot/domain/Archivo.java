@@ -15,7 +15,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -36,6 +35,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Archivo.findAll", query = "SELECT a FROM Archivo a"),
     @NamedQuery(name = "Archivo.findByIdArchivo", query = "SELECT a FROM Archivo a WHERE a.idArchivo = :idArchivo"),
+    @NamedQuery(name = "Archivo.findByNombreAr", query = "SELECT a FROM Archivo a WHERE a.nombreAr = :nombreAr"),
+    @NamedQuery(name = "Archivo.findByTipoMime", query = "SELECT a FROM Archivo a WHERE a.tipoMime = :tipoMime"),
+    @NamedQuery(name = "Archivo.findByTamanioAr", query = "SELECT a FROM Archivo a WHERE a.tamanioAr = :tamanioAr"),
+    @NamedQuery(name = "Archivo.findByUrlAr", query = "SELECT a FROM Archivo a WHERE a.urlAr = :urlAr"),
     @NamedQuery(name = "Archivo.findByFechaPublicacionAr", query = "SELECT a FROM Archivo a WHERE a.fechaPublicacionAr = :fechaPublicacionAr"),
     @NamedQuery(name = "Archivo.findByTxuser", query = "SELECT a FROM Archivo a WHERE a.txuser = :txuser"),
     @NamedQuery(name = "Archivo.findByTxhost", query = "SELECT a FROM Archivo a WHERE a.txhost = :txhost"),
@@ -47,14 +50,30 @@ public class Archivo implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idArchivo")
+    @Column(name = "id_archivo")
     private Integer idArchivo;
-    @Lob
-    @Column(name = "contenidoAr")
-    private byte[] contenidoAr;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "fechaPublicacionAr")
+    @Size(min = 1, max = 50)
+    @Column(name = "nombre_ar")
+    private String nombreAr;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "tipo_mime")
+    private String tipoMime;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "tamanio_ar")
+    private int tamanioAr;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "url_ar")
+    private String urlAr;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "fecha_publicacion_ar")
     @Temporal(TemporalType.DATE)
     private Date fechaPublicacionAr;
     @Basic(optional = false)
@@ -76,9 +95,9 @@ public class Archivo implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @JoinColumn(name = "Curso_idCurso", referencedColumnName = "idCurso")
+    @JoinColumn(name = "curso_id_curso", referencedColumnName = "id_curso")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Curso cursoidCurso;
+    private Curso cursoIdCurso;
 
     public Archivo() {
     }
@@ -87,8 +106,12 @@ public class Archivo implements Serializable {
         this.idArchivo = idArchivo;
     }
 
-    public Archivo(Integer idArchivo, Date fechaPublicacionAr, String txuser, String txhost, Date txdate, int status) {
+    public Archivo(Integer idArchivo, String nombreAr, String tipoMime, int tamanioAr, String urlAr, Date fechaPublicacionAr, String txuser, String txhost, Date txdate, int status) {
         this.idArchivo = idArchivo;
+        this.nombreAr = nombreAr;
+        this.tipoMime = tipoMime;
+        this.tamanioAr = tamanioAr;
+        this.urlAr = urlAr;
         this.fechaPublicacionAr = fechaPublicacionAr;
         this.txuser = txuser;
         this.txhost = txhost;
@@ -104,12 +127,36 @@ public class Archivo implements Serializable {
         this.idArchivo = idArchivo;
     }
 
-    public byte[] getContenidoAr() {
-        return contenidoAr;
+    public String getNombreAr() {
+        return nombreAr;
     }
 
-    public void setContenidoAr(byte[] contenidoAr) {
-        this.contenidoAr = contenidoAr;
+    public void setNombreAr(String nombreAr) {
+        this.nombreAr = nombreAr;
+    }
+
+    public String getTipoMime() {
+        return tipoMime;
+    }
+
+    public void setTipoMime(String tipoMime) {
+        this.tipoMime = tipoMime;
+    }
+
+    public int getTamanioAr() {
+        return tamanioAr;
+    }
+
+    public void setTamanioAr(int tamanioAr) {
+        this.tamanioAr = tamanioAr;
+    }
+
+    public String getUrlAr() {
+        return urlAr;
+    }
+
+    public void setUrlAr(String urlAr) {
+        this.urlAr = urlAr;
     }
 
     public Date getFechaPublicacionAr() {
@@ -152,12 +199,12 @@ public class Archivo implements Serializable {
         this.status = status;
     }
 
-    public Curso getCursoidCurso() {
-        return cursoidCurso;
+    public Curso getCursoIdCurso() {
+        return cursoIdCurso;
     }
 
-    public void setCursoidCurso(Curso cursoidCurso) {
-        this.cursoidCurso = cursoidCurso;
+    public void setCursoIdCurso(Curso cursoIdCurso) {
+        this.cursoIdCurso = cursoIdCurso;
     }
 
     @Override

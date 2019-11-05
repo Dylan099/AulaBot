@@ -47,12 +47,12 @@ public class Respuesta implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idRespuesta")
+    @Column(name = "id_respuesta")
     private Integer idRespuesta;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
-    @Column(name = "enunciadoRe")
+    @Column(name = "enunciado_re")
     private String enunciadoRe;
     @Basic(optional = false)
     @NotNull
@@ -77,9 +77,9 @@ public class Respuesta implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @JoinColumn(name = "Pregunta_idPregunta", referencedColumnName = "idPregunta")
+    @JoinColumn(name = "pregunta_id_pregunta", referencedColumnName = "id_pregunta")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Pregunta preguntaidPregunta;
+    private Pregunta preguntaIdPregunta;
 
     public Respuesta() {
     }
@@ -154,12 +154,12 @@ public class Respuesta implements Serializable {
         this.status = status;
     }
 
-    public Pregunta getPreguntaidPregunta() {
-        return preguntaidPregunta;
+    public Pregunta getPreguntaIdPregunta() {
+        return preguntaIdPregunta;
     }
 
-    public void setPreguntaidPregunta(Pregunta preguntaidPregunta) {
-        this.preguntaidPregunta = preguntaidPregunta;
+    public void setPreguntaIdPregunta(Pregunta preguntaIdPregunta) {
+        this.preguntaIdPregunta = preguntaIdPregunta;
     }
 
     @Override

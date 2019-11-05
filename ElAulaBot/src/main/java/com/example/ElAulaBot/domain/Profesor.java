@@ -53,7 +53,7 @@ public class Profesor implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idProfesor")
+    @Column(name = "id_profesor")
     private Integer idProfesor;
     @Basic(optional = false)
     @NotNull
@@ -62,23 +62,23 @@ public class Profesor implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "primerNombrePr")
+    @Column(name = "primer_nombre_pr")
     private String primerNombrePr;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "primerApellidoPr")
+    @Column(name = "primer_apellido_pr")
     private String primerApellidoPr;
     @Size(max = 50)
-    @Column(name = "segundoNombrePr")
+    @Column(name = "segundo_nombre_pr")
     private String segundoNombrePr;
     @Size(max = 50)
-    @Column(name = "segundoApellidoPr")
+    @Column(name = "segundo_apellido_pr")
     private String segundoApellidoPr;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "celularPr")
+    @Column(name = "celular_pr")
     private String celularPr;
     @Basic(optional = false)
     @NotNull
@@ -99,7 +99,7 @@ public class Profesor implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profesoridProfesor", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profesorIdProfesor", fetch = FetchType.LAZY)
     private Collection<Curso> cursoCollection;
 
     public Profesor() {
