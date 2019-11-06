@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface ProfesorRepository extends JpaRepository<Profesor,Integer> {
     List<Profesor> findAllByStatus(int status);
-    Optional<Profesor> findProfesorByChatId(int chatId);
+    Profesor findProfesorByChatId(int chatId);
 }
