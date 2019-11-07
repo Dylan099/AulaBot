@@ -42,7 +42,8 @@ public class ProfesorBl {
         if(profesor != null){
             return profesor;
         }else{
-            throw new RuntimeException("Imposible encontrar el profesor con el Chat ID: "+chatId);
+            LOGGER.info("El usuario no es un profesor registrado");
+            return null;
         }
     }
 

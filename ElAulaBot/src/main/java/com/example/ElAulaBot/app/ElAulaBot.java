@@ -89,7 +89,38 @@ public class ElAulaBot extends TelegramLongPollingBot {
                         } catch (TelegramApiException e) {
                             e.printStackTrace();
                         }
+                    } else  if(estudianteBl.findEstudianteByChatId(user.getId())!=null){
+
+                        SendMessage messageCursoEst = new SendMessage()
+                                .setChatId(chatId)
+                                .setText("Que desea hacer:");
+
+                        InlineKeyboardMarkup markupInlineCurso = new InlineKeyboardMarkup();
+                        List<List<InlineKeyboardButton>> rowsInlineCurso = new ArrayList<>();
+                        List<InlineKeyboardButton> rowInlineCurso = new ArrayList<>();
+                        rowInlineCurso.add(new InlineKeyboardButton().setText("Inscribirse a un Curso").setCallbackData("inscripcion"));
+                        rowInlineCurso.add(new InlineKeyboardButton().setText("Ver Cursos").setCallbackData("verCursosEst"));
+
+                        rowsInlineCurso.add(rowInlineCurso);
+
+                        markupInlineCurso.setKeyboard(rowsInlineCurso);
+                        messageCursoEst.setReplyMarkup(markupInlineCurso);
+                        try {
+                            execute(messageCursoEst);
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        SendMessage messageDefault = new SendMessage()
+                                .setChatId(chatId)
+                                .setText("Usted no esta inscrito, por favor inicie el comando /start.");
+                        try {
+                            execute(messageDefault);
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
                     }
+
 
             }
 
@@ -142,6 +173,21 @@ public class ElAulaBot extends TelegramLongPollingBot {
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
+                    break;
+                case "inscripcion":
+                    answer = "Ingrese el codigo del curso al que desea inscribirse: ";
+                    EditMessageText new_messageInsCurso = new EditMessageText()
+                            .setChatId(chat_id)
+                            .setMessageId(toIntExact(message_id))
+                            .setText(answer);
+                    try {
+                        execute(new_messageInsCurso);
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case "verCursosEst":
+
 
             }
         }

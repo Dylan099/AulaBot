@@ -41,7 +41,8 @@ public class EstudianteBl {
         if(estudiante != null){
             return estudiante;
         }else{
-            throw new RuntimeException("Imposible encontrar estudiante con el Chat ID: "+chatId);
+            LOGGER.info("El usuario no es un estudiante registrado");
+            return null;
         }
     }
 
