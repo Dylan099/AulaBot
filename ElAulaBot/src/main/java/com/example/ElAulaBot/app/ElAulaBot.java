@@ -1,6 +1,7 @@
 package com.example.ElAulaBot.app;
 
 import com.example.ElAulaBot.bl.CursoBl;
+import com.example.ElAulaBot.bl.EstudianteBl;
 import com.example.ElAulaBot.bl.ProfesorBl;
 import com.example.ElAulaBot.dao.CursoRepository;
 import com.example.ElAulaBot.dao.ProfesorRepository;
@@ -25,10 +26,12 @@ public class ElAulaBot extends TelegramLongPollingBot {
 
     ProfesorBl profesorBl;
     CursoBl cursoBl;
+    EstudianteBl estudianteBl;
 
 
-    public ElAulaBot(ProfesorBl profesorBl, CursoBl cursoBl) {
+    public ElAulaBot(ProfesorBl profesorBl, EstudianteBl estudianteBl, CursoBl cursoBl) {
         this.profesorBl = profesorBl;
+        this.estudianteBl = estudianteBl;
         this.cursoBl = cursoBl;
     }
 
@@ -90,11 +93,6 @@ public class ElAulaBot extends TelegramLongPollingBot {
 
             }
 
-
-
-
-
-
         } else if (update.hasCallbackQuery()) {
 
             // Set variables
@@ -118,7 +116,9 @@ public class ElAulaBot extends TelegramLongPollingBot {
                     }
                     break;
                 case "estudiante":
-                    answer = "Gracias por registrarte "+" como estudiante.";
+                    List<String> messagesEstudiante = estudianteBl.processUpdate(user);
+                    answer = "Gracias por registrarte "+user.getFirstName()+" "+user.getLastName()+" como estudiante.";
+                    answer += "Su ID: "+chatId;
                     EditMessageText new_messageEst = new EditMessageText()
                             .setChatId(chat_id)
                             .setMessageId(toIntExact(message_id))
@@ -146,7 +146,6 @@ public class ElAulaBot extends TelegramLongPollingBot {
             }
         }
     }
-
 
     public String getBotUsername() {
         return "ElAulaBot";

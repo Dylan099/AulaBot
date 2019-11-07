@@ -4,10 +4,14 @@ import com.example.ElAulaBot.dao.EstudianteRepository;
 import com.example.ElAulaBot.domain.Estudiante;
 import com.example.ElAulaBot.dto.EstudianteDto;
 import com.example.ElAulaBot.dto.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,14 +25,6 @@ public class EstudianteBl {
         this.estudianteRepository = estudianteRepository;
     }
 
-    public Estudiante findEstudianteById(Integer pk){
-        Optional<Estudiante> optional =this.estudianteRepository.findById(pk);
-        if(optional.isPresent()){
-            return optional.get();
-        }else{
-            throw new RuntimeException("Imposible encontrar estudiante con ID: " + pk);
-        }
-    }
 
     public List<EstudianteDto> findAllEstudiante(){
         List<EstudianteDto> estudianteDtoList = new ArrayList<>();
@@ -37,6 +33,57 @@ public class EstudianteBl {
         }
         return estudianteDtoList;
     }
+
+    public Estudiante findEstudianteByChatId(int chatId){
+        Estudiante estudiante =this.estudianteRepository.findEstudianteByChatId(chatId);
+        if(estudiante != null){
+            return estudiante;
+        }else{
+            throw new RuntimeException("Imposible encontrar estudiante con el Chat ID: "+chatId);
+        }
+    }
+
+    private boolean initEstudiante(User user) {
+        boolean result = false;
+        Estudiante estudiante = estudianteRepository.findEstudianteByChatId(user.getId());
+        if (estudiante == null) {
+            Estudiante nuevoEstudiante =new Estudiante();
+            nuevoEstudiante.setPrimerNombreEs(user.getFirstName());
+            if(user.getLastName()==null){
+                nuevoEstudiante.setPrimerApellidoEs(" ");
+            } else {
+                nuevoEstudiante.setPrimerApellidoEs(user.getLastName());
+            }
+            nuevoEstudiante.setChatId(user.getId());
+            nuevoEstudiante.setCelularEs("73048478");
+            nuevoEstudiante.setCursoHasEstudianteCollection(null);
+            nuevoEstudiante.setStatus(Status.ACTIVE.getStatus());
+            nuevoEstudiante.setTxhost("localhost");
+            nuevoEstudiante.setTxuser("admin");
+            nuevoEstudiante.setTxdate(new Date());
+            estudianteRepository.save(nuevoEstudiante);
+            result = true;
+        }
+        return result;
+    }
+
+    public List<String> processUpdate(User user) {
+        List<String> result = new ArrayList<>();
+        if (initEstudiante(user)){
+            result.add("Registro completado exitosamente");
+        }else{
+            result.add("Nuevo textline");
+        }
+        return result;
+    }
+
+
+
+
+
+
+
+
 
 
 }
