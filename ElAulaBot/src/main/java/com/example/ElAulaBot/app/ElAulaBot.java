@@ -118,7 +118,7 @@ public class ElAulaBot extends TelegramLongPollingBot {
                 case "estudiante":
                     List<String> messagesEstudiante = estudianteBl.processUpdate(user);
                     answer = "Gracias por registrarte "+user.getFirstName()+" "+user.getLastName()+" como estudiante.";
-                    answer += "Su ID: "+chatId;
+                    answer += " Su ID: "+chatId;
                     EditMessageText new_messageEst = new EditMessageText()
                             .setChatId(chat_id)
                             .setMessageId(toIntExact(message_id))

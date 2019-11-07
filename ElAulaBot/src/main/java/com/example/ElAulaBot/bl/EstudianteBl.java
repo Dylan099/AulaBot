@@ -19,6 +19,8 @@ import java.util.Optional;
 public class EstudianteBl {
 
     EstudianteRepository estudianteRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(EstudianteBl.class);
+
 
     @Autowired
     public EstudianteBl (EstudianteRepository estudianteRepository){
@@ -68,14 +70,19 @@ public class EstudianteBl {
     }
 
     public List<String> processUpdate(User user) {
+        LOGGER.info("Recibiendo solicitud {} ", user);
         List<String> result = new ArrayList<>();
         if (initEstudiante(user)){
+            LOGGER.info("Primer inicio de sesion para: {} ", user );
             result.add("Registro completado exitosamente");
         }else{
+            LOGGER.info("Bienvenida a: {} ", user );
             result.add("Nuevo textline");
         }
         return result;
     }
+
+
 
 
 
