@@ -37,7 +37,7 @@ public class ProfesorBl {
             throw new RuntimeException("Imposible encontrar el profesor con el ID: "+pk);
         }
     }
-    public Profesor findProfesorByChatId(Integer chatId){
+    public Profesor findProfesorByChatId(int chatId){
         Profesor profesor =this.profesorRepository.findProfesorByChatId(chatId);
         if(profesor != null){
             return profesor;
@@ -91,7 +91,6 @@ public class ProfesorBl {
         }
 
         //continueChatWihtUser(CpUser, CpChat)
-
 
         return result;
     }

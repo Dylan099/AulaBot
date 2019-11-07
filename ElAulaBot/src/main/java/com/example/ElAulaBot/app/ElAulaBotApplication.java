@@ -1,5 +1,6 @@
 package com.example.ElAulaBot.app;
 
+import com.example.ElAulaBot.bl.CursoBl;
 import com.example.ElAulaBot.bl.ProfesorBl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -15,10 +16,12 @@ import javax.annotation.PostConstruct;
 public class ElAulaBotApplication {
 
 	ProfesorBl profesorBl;
+	CursoBl cursoBl;
 
 	@Autowired
 	public ElAulaBotApplication(ProfesorBl profesorBl) {
 		this.profesorBl = profesorBl;
+		this.cursoBl = cursoBl;
 	}
 
 	public ElAulaBotApplication() {
@@ -35,7 +38,7 @@ public class ElAulaBotApplication {
 
 		// TODO Register our bot
 		try {
-			botsApi.registerBot(new ElAulaBot(profesorBl));
+			botsApi.registerBot(new ElAulaBot(profesorBl,cursoBl));
 		} catch (TelegramApiException e) {
 			e.printStackTrace();
 		}
