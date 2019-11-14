@@ -82,6 +82,8 @@ public class Curso implements Serializable {
     private Integer status;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
     private Collection<Archivo> archivoCollection;
+    @OneToMany(mappedBy = "profesorIdProfesor1", fetch = FetchType.LAZY)
+    private Collection<Botuser> botuserCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
     private Collection<Horario> horarioCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
@@ -179,6 +181,15 @@ public class Curso implements Serializable {
 
     public void setArchivoCollection(Collection<Archivo> archivoCollection) {
         this.archivoCollection = archivoCollection;
+    }
+
+    @XmlTransient
+    public Collection<Botuser> getBotuserCollection() {
+        return botuserCollection;
+    }
+
+    public void setBotuserCollection(Collection<Botuser> botuserCollection) {
+        this.botuserCollection = botuserCollection;
     }
 
     @XmlTransient
