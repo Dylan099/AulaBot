@@ -3,6 +3,7 @@ package com.example.ElAulaBot.app;
 import com.example.ElAulaBot.bl.CursoBl;
 import com.example.ElAulaBot.bl.EstudianteBl;
 import com.example.ElAulaBot.bl.ProfesorBl;
+import com.example.ElAulaBot.bl.UsuarioBl;
 import com.example.ElAulaBot.dao.CursoRepository;
 import com.example.ElAulaBot.dao.ProfesorRepository;
 import com.example.ElAulaBot.domain.Profesor;
@@ -27,42 +28,46 @@ public class ElAulaBot extends TelegramLongPollingBot {
     ProfesorBl profesorBl;
     CursoBl cursoBl;
     EstudianteBl estudianteBl;
+    UsuarioBl usuarioBl;
 
 
-    public ElAulaBot(ProfesorBl profesorBl, EstudianteBl estudianteBl, CursoBl cursoBl) {
+    public ElAulaBot(ProfesorBl profesorBl, EstudianteBl estudianteBl, CursoBl cursoBl,UsuarioBl usuarioBl) {
         this.profesorBl = profesorBl;
         this.estudianteBl = estudianteBl;
         this.cursoBl = cursoBl;
+        this.usuarioBl = usuarioBl;
     }
 
     private long chatId;
     private User user;
-
+    List<String> messages;
 
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
+            messages = usuarioBl.processUpdate(update.getMessage().getFrom(),update);
             switch (update.getMessage().getText()){
                 case "/start":
-                    chatId = update.getMessage().getFrom().getId();
-                    user = update.getMessage().getFrom();
-                    SendMessage message = new SendMessage()
-                            .setChatId(chatId)
-                            .setText("Bienvenido como desea registrarse : " + " ID -> "+update.getMessage().getFrom().getId());
-                    InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
-                    List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-                    List<InlineKeyboardButton> rowInline = new ArrayList<>();
-                    rowInline.add(new InlineKeyboardButton().setText("Profesor").setCallbackData("profesor"));
-                    rowInline.add(new InlineKeyboardButton().setText("Estudiante").setCallbackData("estudiante"));
 
-                    rowsInline.add(rowInline);
-                    markupInline.setKeyboard(rowsInline);
-                    message.setReplyMarkup(markupInline);
-                    try {
-                        execute(message);
-                    } catch (TelegramApiException e) {
-                        e.printStackTrace();
-                    }
-                    break;
+                    chatId = update.getMessage().getFrom().getId();
+                user = update.getMessage().getFrom();
+                SendMessage message = new SendMessage()
+                        .setChatId(chatId)
+                        .setText("Bienvenido como desea registrarse : " + " ID -> "+update.getMessage().getFrom().getId());
+                InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+                List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+                List<InlineKeyboardButton> rowInline = new ArrayList<>();
+                rowInline.add(new InlineKeyboardButton().setText("Profesor").setCallbackData("profesor"));
+                rowInline.add(new InlineKeyboardButton().setText("Estudiante").setCallbackData("estudiante"));
+
+                rowsInline.add(rowInline);
+                markupInline.setKeyboard(rowsInline);
+                message.setReplyMarkup(markupInline);
+                try {
+                    execute(message);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                break;
 
                 case "/curso":
                     chatId = update.getMessage().getFrom().getId();

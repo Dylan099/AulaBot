@@ -68,7 +68,7 @@ public class ProfesorBl {
                 nuevoProfesor.setPrimerApellidoPr(user.getLastName());
             nuevoProfesor.setChatId(user.getId());
             nuevoProfesor.setCelularPr(user.getLanguageCode());
-            nuevoProfesor.setCursoCollection(null);
+            // nuevoProfesor.setCursoCollection(null);
             nuevoProfesor.setStatus(Status.ACTIVE.getStatus());
             nuevoProfesor.setTxhost("localhost");
             nuevoProfesor.setTxuser("admin");

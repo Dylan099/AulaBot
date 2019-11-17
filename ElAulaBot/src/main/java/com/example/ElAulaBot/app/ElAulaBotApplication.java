@@ -3,6 +3,7 @@ package com.example.ElAulaBot.app;
 import com.example.ElAulaBot.bl.CursoBl;
 import com.example.ElAulaBot.bl.EstudianteBl;
 import com.example.ElAulaBot.bl.ProfesorBl;
+import com.example.ElAulaBot.bl.UsuarioBl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,12 +20,14 @@ public class ElAulaBotApplication {
 	ProfesorBl profesorBl;
 	EstudianteBl estudianteBl;
 	CursoBl cursoBl;
+	UsuarioBl usuarioBl;
 
 	@Autowired
-	public ElAulaBotApplication(ProfesorBl profesorBl, EstudianteBl estudianteBl) {
+	public ElAulaBotApplication(ProfesorBl profesorBl, EstudianteBl estudianteBl,UsuarioBl usuarioBl) {
 		this.profesorBl = profesorBl;
 		this.estudianteBl = estudianteBl;
 		this.cursoBl = cursoBl;
+		this.usuarioBl = usuarioBl;
 	}
 
 	public ElAulaBotApplication() {
@@ -41,7 +44,7 @@ public class ElAulaBotApplication {
 
 		// TODO Register our bot
 		try {
-			botsApi.registerBot(new ElAulaBot(profesorBl,estudianteBl,cursoBl));
+			botsApi.registerBot(new ElAulaBot(profesorBl,estudianteBl,cursoBl,usuarioBl));
 		} catch (TelegramApiException e) {
 			e.printStackTrace();
 		}

@@ -22,6 +22,7 @@
     <class>com.example.ElAulaBot.domain.Respuesta</class>
     <class>com.example.ElAulaBot.domain.CursoHasEstudiante</class>
     <class>com.example.ElAulaBot.domain.Botuser</class>
+    <class>com.example.ElAulaBot.domain.Usuario</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/AulaBot?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

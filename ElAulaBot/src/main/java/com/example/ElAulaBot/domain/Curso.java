@@ -17,10 +17,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -82,14 +82,12 @@ public class Curso implements Serializable {
     private Integer status;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
     private Collection<Archivo> archivoCollection;
-    @OneToMany(mappedBy = "profesorIdProfesor1", fetch = FetchType.LAZY)
-    private Collection<Botuser> botuserCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
     private Collection<Horario> horarioCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
     private Collection<Anuncio> anuncioCollection;
     @JoinColumn(name = "profesor_id_profesor", referencedColumnName = "id_profesor")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Profesor profesorIdProfesor;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
     private Collection<CursoHasEstudiante> cursoHasEstudianteCollection;
@@ -181,15 +179,6 @@ public class Curso implements Serializable {
 
     public void setArchivoCollection(Collection<Archivo> archivoCollection) {
         this.archivoCollection = archivoCollection;
-    }
-
-    @XmlTransient
-    public Collection<Botuser> getBotuserCollection() {
-        return botuserCollection;
-    }
-
-    public void setBotuserCollection(Collection<Botuser> botuserCollection) {
-        this.botuserCollection = botuserCollection;
     }
 
     @XmlTransient
