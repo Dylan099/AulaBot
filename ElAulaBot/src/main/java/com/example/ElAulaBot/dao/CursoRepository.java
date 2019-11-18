@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface CursoRepository extends JpaRepository<Curso,Integer> {
     List<Curso> findAllByStatus(int status);
-    //Curso findCursoByProfId(int profId);
+    //Curso findCursoByChatId(int chatId);
 }

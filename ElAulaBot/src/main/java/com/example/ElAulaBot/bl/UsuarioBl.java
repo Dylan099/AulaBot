@@ -48,21 +48,31 @@ public class UsuarioBl {
     }
 
     private boolean initUsuario(User user, Update update) {
-        boolean result = false;
+            boolean result = false;
+            Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
+            if (usuario == null) {
+                Usuario nuevoUsuario =new Usuario();
+                nuevoUsuario.setChatId(String.valueOf(user.getId()));
+                nuevoUsuario.setLastMessageSent(update.getMessage().getText());
+                nuevoUsuario.setLastMessageReceived(null);
+                nuevoUsuario.setTxhost("localhost");
+                nuevoUsuario.setTxuser("admin");
+                nuevoUsuario.setTxdate(new Date());
+                usuarioRepository.save(nuevoUsuario);
+            }
+            return result;
+    }
+    public String lastMessageReceived(Update update, User user,String messageReceived){
         Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
-        if (usuario == null) {
-            Usuario nuevoUsuario =new Usuario();
-            nuevoUsuario.setChatId(String.valueOf(user.getId()));
-            nuevoUsuario.setLastMessageSent(update.getMessage().getText());
-            nuevoUsuario.setLastMessageReceived(null);
-            nuevoUsuario.setTxhost("localhost");
-            nuevoUsuario.setTxuser("admin");
-            nuevoUsuario.setTxdate(new Date());
-            usuarioRepository.save(nuevoUsuario);
-        }
-        return result;
+        usuario.setLastMessageReceived(messageReceived);
+        return messageReceived;
     }
 
+    public String lastMessageSent(Update update, User user,String messageSent){
+        Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
+        usuario.setLastMessageSent(messageSent);
+        return messageSent;
+    }
 
 
 

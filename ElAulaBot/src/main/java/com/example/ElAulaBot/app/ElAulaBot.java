@@ -41,15 +41,21 @@ public class ElAulaBot extends TelegramLongPollingBot {
     private long chatId;
     private User user;
     List<String> messages;
+    String lastMessageReceived="";
+    String lastMessageSent="";
 
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
+            chatId = update.getMessage().getFrom().getId();
+            user = update.getMessage().getFrom();
+            lastMessageSent = usuarioBl.lastMessageSent(update,user,update.getMessage().getText());
             messages = usuarioBl.processUpdate(update.getMessage().getFrom(),update);
-            switch (update.getMessage().getText()){
+            String userMessage = update.getMessage().getText();
+            switch (userMessage){
                 case "/start":
 
                     chatId = update.getMessage().getFrom().getId();
-                user = update.getMessage().getFrom();
+                    user = update.getMessage().getFrom();
                 SendMessage message = new SendMessage()
                         .setChatId(chatId)
                         .setText("Bienvenido como desea registrarse : " + " ID -> "+update.getMessage().getFrom().getId());
@@ -67,6 +73,8 @@ public class ElAulaBot extends TelegramLongPollingBot {
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
+                lastMessageSent = usuarioBl.lastMessageSent(update,user,"/start");
+
                 break;
 
                 case "/curso":
@@ -128,6 +136,29 @@ public class ElAulaBot extends TelegramLongPollingBot {
 
 
             }
+            switch (lastMessageReceived){
+
+                case "Ingrese el nombre del curso a crear: ":
+
+                    chatId = update.getMessage().getFrom().getId();
+                    user = update.getMessage().getFrom();
+                    System.out.println(chatId);
+                    System.out.println(user);
+                    String nombreCurso = update.getMessage().getText();
+                    System.out.println(nombreCurso);
+                    cursoBl.crearCurso(user,nombreCurso);
+                    String answerCrearCurso = "Curso Creado.";
+                    EditMessageText new_messageInsCurso = new EditMessageText()
+                            .setChatId(chatId)
+                            .setMessageId(toIntExact(update.getMessage().getMessageId()))
+                            .setText(answerCrearCurso);
+                    try {
+                        execute(new_messageInsCurso);
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
 
         } else if (update.hasCallbackQuery()) {
 
@@ -178,7 +209,8 @@ public class ElAulaBot extends TelegramLongPollingBot {
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
-                    break;
+                    lastMessageReceived = usuarioBl.lastMessageReceived(update,user,answer);
+                break;
                 case "inscripcion":
                     answer = "Ingrese el codigo del curso al que desea inscribirse: ";
                     EditMessageText new_messageInsCurso = new EditMessageText()
@@ -190,6 +222,8 @@ public class ElAulaBot extends TelegramLongPollingBot {
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
+                    lastMessageReceived = usuarioBl.lastMessageReceived(update,user,"Ingrese el nombre del curso a crear:");
+
                     break;
                 case "verCursosEst":
 
