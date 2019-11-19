@@ -62,16 +62,23 @@ public class UsuarioBl {
             }
             return result;
     }
-    public String lastMessageReceived(Update update, User user,String messageReceived){
+    public String getlastMessageReceived(Update update, User user){
         Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
-        usuario.setLastMessageReceived(messageReceived);
-        return messageReceived;
+        return usuario.getLastMessageReceived();
     }
 
-    public String lastMessageSent(Update update, User user,String messageSent){
+    public String getlastMessageSent(Update update, User user){
+        Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
+        return usuario.getLastMessageSent();
+    }
+    public void setlastMessageReceived(Update update, User user,String messageReceived){
+        Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
+        usuario.setLastMessageReceived(messageReceived);
+    }
+
+    public void setlastMessageSent(Update update, User user,String messageSent){
         Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
         usuario.setLastMessageSent(messageSent);
-        return messageSent;
     }
 
 

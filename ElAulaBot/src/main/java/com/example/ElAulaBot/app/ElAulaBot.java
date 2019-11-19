@@ -6,7 +6,9 @@ import com.example.ElAulaBot.bl.ProfesorBl;
 import com.example.ElAulaBot.bl.UsuarioBl;
 import com.example.ElAulaBot.dao.CursoRepository;
 import com.example.ElAulaBot.dao.ProfesorRepository;
+import com.example.ElAulaBot.domain.Curso;
 import com.example.ElAulaBot.domain.Profesor;
+import com.example.ElAulaBot.dto.CursoDto;
 import com.example.ElAulaBot.dto.ProfesorDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -30,7 +32,7 @@ public class ElAulaBot extends TelegramLongPollingBot {
     EstudianteBl estudianteBl;
     UsuarioBl usuarioBl;
 
-
+    @Autowired
     public ElAulaBot(ProfesorBl profesorBl, EstudianteBl estudianteBl, CursoBl cursoBl,UsuarioBl usuarioBl) {
         this.profesorBl = profesorBl;
         this.estudianteBl = estudianteBl;
@@ -48,7 +50,8 @@ public class ElAulaBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             chatId = update.getMessage().getFrom().getId();
             user = update.getMessage().getFrom();
-            lastMessageSent = usuarioBl.lastMessageSent(update,user,update.getMessage().getText());
+            lastMessageSent = usuarioBl.getlastMessageSent(update,user);
+            lastMessageReceived = usuarioBl.getlastMessageReceived(update,user);
             messages = usuarioBl.processUpdate(update.getMessage().getFrom(),update);
             String userMessage = update.getMessage().getText();
             switch (userMessage){
@@ -70,10 +73,11 @@ public class ElAulaBot extends TelegramLongPollingBot {
                 message.setReplyMarkup(markupInline);
                 try {
                     execute(message);
+                    usuarioBl.setlastMessageSent(update,user,"/start");
+                    usuarioBl.setlastMessageReceived(update,user,message.getText());
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
-                lastMessageSent = usuarioBl.lastMessageSent(update,user,"/start");
 
                 break;
 
@@ -99,6 +103,8 @@ public class ElAulaBot extends TelegramLongPollingBot {
                         messageCurso.setReplyMarkup(markupInlineCurso);
                         try {
                             execute(messageCurso);
+                            usuarioBl.setlastMessageReceived(update,user,messageCurso.getText());
+                            usuarioBl.setlastMessageSent(update,user,"/curso");
                         } catch (TelegramApiException e) {
                             e.printStackTrace();
                         }
@@ -120,6 +126,8 @@ public class ElAulaBot extends TelegramLongPollingBot {
                         messageCursoEst.setReplyMarkup(markupInlineCurso);
                         try {
                             execute(messageCursoEst);
+                            usuarioBl.setlastMessageReceived(update,user,messageCursoEst.getText());
+                            usuarioBl.setlastMessageSent(update,user,"/curso");
                         } catch (TelegramApiException e) {
                             e.printStackTrace();
                         }
@@ -129,10 +137,13 @@ public class ElAulaBot extends TelegramLongPollingBot {
                                 .setText("Usted no esta inscrito, por favor inicie el comando /start.");
                         try {
                             execute(messageDefault);
+                            usuarioBl.setlastMessageReceived(update,user,messageDefault.getText());
+                            usuarioBl.setlastMessageSent(update,user,"/curso");
                         } catch (TelegramApiException e) {
                             e.printStackTrace();
                         }
                     }
+                    break;
 
 
             }
@@ -146,8 +157,11 @@ public class ElAulaBot extends TelegramLongPollingBot {
                     System.out.println(user);
                     String nombreCurso = update.getMessage().getText();
                     System.out.println(nombreCurso);
-                    cursoBl.crearCurso(user,nombreCurso);
-                    String answerCrearCurso = "Curso Creado.";
+
+                    //cursoBl.crearCurso(user,nombreCurso);
+
+                    List<CursoDto> lcurso = cursoBl.findAllCurso();
+                    String answerCrearCurso = "Curso Creado. BUENO NO PERO SI"+ lcurso.get(1);
                     EditMessageText new_messageInsCurso = new EditMessageText()
                             .setChatId(chatId)
                             .setMessageId(toIntExact(update.getMessage().getMessageId()))
@@ -178,6 +192,8 @@ public class ElAulaBot extends TelegramLongPollingBot {
                             .setText(answer);
                     try {
                         execute(new_messagePro);
+                        usuarioBl.setlastMessageReceived(update,user,new_messagePro.getText());
+                        usuarioBl.setlastMessageSent(update,user,"profesor");
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
@@ -192,6 +208,8 @@ public class ElAulaBot extends TelegramLongPollingBot {
                             .setText(answer);
                     try {
                         execute(new_messageEst);
+                        usuarioBl.setlastMessageReceived(update,user,new_messageEst.getText());
+                        usuarioBl.setlastMessageSent(update,user,"estudiante");
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
@@ -206,10 +224,11 @@ public class ElAulaBot extends TelegramLongPollingBot {
                             .setText(answer);
                     try {
                         execute(new_messageCrearCurso);
+                        usuarioBl.setlastMessageReceived(update,user,new_messageCrearCurso.getText());
+                        usuarioBl.setlastMessageSent(update,user,"crear curso");
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
-                    lastMessageReceived = usuarioBl.lastMessageReceived(update,user,answer);
                 break;
                 case "inscripcion":
                     answer = "Ingrese el codigo del curso al que desea inscribirse: ";
@@ -219,10 +238,11 @@ public class ElAulaBot extends TelegramLongPollingBot {
                             .setText(answer);
                     try {
                         execute(new_messageInsCurso);
+                        usuarioBl.setlastMessageReceived(update,user,new_messageInsCurso.getText());
+                        usuarioBl.setlastMessageSent(update,user,"inscribir curso");
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
-                    lastMessageReceived = usuarioBl.lastMessageReceived(update,user,"Ingrese el nombre del curso a crear:");
 
                     break;
                 case "verCursosEst":

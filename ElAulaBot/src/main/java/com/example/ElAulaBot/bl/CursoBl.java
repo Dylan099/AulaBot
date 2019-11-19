@@ -21,13 +21,12 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 @Service
-@Transactional
 public class CursoBl {
     CursoRepository cursoRepository;
     ProfesorRepository profesorRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(CursoBl.class);
-    @Autowired
 
+    @Autowired
     public CursoBl(CursoRepository cursoRepository, ProfesorRepository profesorRepository) {
         this.cursoRepository = cursoRepository;
         this.profesorRepository = profesorRepository;
