@@ -18,7 +18,7 @@ public class CursoDto {
 
     public CursoDto(Curso curso) {
         this.idCurso = curso.getIdCurso();
-        this.profesor_idProfesor = curso.getProfesorIdProfesor().getIdProfesor();
+        this.profesor_idProfesor = curso.getIdProfesor().getIdProfesor();
         this.fechaCreacionCu = curso.getFechaCreacionCu();
         this.nombreCurso = curso.getNombreCurso();
         this.codigoCurso = curso.getCodigoCurso();

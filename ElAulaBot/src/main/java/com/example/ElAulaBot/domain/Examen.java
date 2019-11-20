@@ -85,10 +85,10 @@ public class Examen implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @JoinColumn(name = "curso_id_curso", referencedColumnName = "id_curso")
+    @JoinColumn(name = "id_curso", referencedColumnName = "id_curso")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Curso cursoIdCurso;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "examenIdExamen", fetch = FetchType.LAZY)
+    private Curso idCurso;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idExamen", fetch = FetchType.LAZY)
     private Collection<Pregunta> preguntaCollection;
 
     public Examen() {
@@ -171,12 +171,12 @@ public class Examen implements Serializable {
         this.status = status;
     }
 
-    public Curso getCursoIdCurso() {
-        return cursoIdCurso;
+    public Curso getIdCurso() {
+        return idCurso;
     }
 
-    public void setCursoIdCurso(Curso cursoIdCurso) {
-        this.cursoIdCurso = cursoIdCurso;
+    public void setIdCurso(Curso idCurso) {
+        this.idCurso = idCurso;
     }
 
     @XmlTransient

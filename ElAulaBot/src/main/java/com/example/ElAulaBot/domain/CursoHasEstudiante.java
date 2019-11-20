@@ -66,12 +66,12 @@ public class CursoHasEstudiante implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @JoinColumn(name = "curso_id_curso", referencedColumnName = "id_curso")
+    @JoinColumn(name = "id_curso", referencedColumnName = "id_curso")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Curso cursoIdCurso;
-    @JoinColumn(name = "estudiante_id_estudiante", referencedColumnName = "id_estudiante")
+    private Curso idCurso;
+    @JoinColumn(name = "id_estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Estudiante estudianteIdEstudiante;
+    private Estudiante idEstudiante;
 
     public CursoHasEstudiante() {
     }
@@ -128,20 +128,20 @@ public class CursoHasEstudiante implements Serializable {
         this.status = status;
     }
 
-    public Curso getCursoIdCurso() {
-        return cursoIdCurso;
+    public Curso getIdCurso() {
+        return idCurso;
     }
 
-    public void setCursoIdCurso(Curso cursoIdCurso) {
-        this.cursoIdCurso = cursoIdCurso;
+    public void setIdCurso(Curso idCurso) {
+        this.idCurso = idCurso;
     }
 
-    public Estudiante getEstudianteIdEstudiante() {
-        return estudianteIdEstudiante;
+    public Estudiante getIdEstudiante() {
+        return idEstudiante;
     }
 
-    public void setEstudianteIdEstudiante(Estudiante estudianteIdEstudiante) {
-        this.estudianteIdEstudiante = estudianteIdEstudiante;
+    public void setIdEstudiante(Estudiante idEstudiante) {
+        this.idEstudiante = idEstudiante;
     }
 
     @Override

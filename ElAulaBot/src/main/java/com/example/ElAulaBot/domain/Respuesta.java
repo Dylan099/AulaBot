@@ -77,9 +77,9 @@ public class Respuesta implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @JoinColumn(name = "pregunta_id_pregunta", referencedColumnName = "id_pregunta")
+    @JoinColumn(name = "id_pregunta", referencedColumnName = "id_pregunta")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Pregunta preguntaIdPregunta;
+    private Pregunta idPregunta;
 
     public Respuesta() {
     }
@@ -154,12 +154,12 @@ public class Respuesta implements Serializable {
         this.status = status;
     }
 
-    public Pregunta getPreguntaIdPregunta() {
-        return preguntaIdPregunta;
+    public Pregunta getIdPregunta() {
+        return idPregunta;
     }
 
-    public void setPreguntaIdPregunta(Pregunta preguntaIdPregunta) {
-        this.preguntaIdPregunta = preguntaIdPregunta;
+    public void setIdPregunta(Pregunta idPregunta) {
+        this.idPregunta = idPregunta;
     }
 
     @Override

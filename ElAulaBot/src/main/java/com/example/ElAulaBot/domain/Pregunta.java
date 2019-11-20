@@ -81,11 +81,11 @@ public class Pregunta implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntaIdPregunta", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPregunta", fetch = FetchType.LAZY)
     private Collection<Respuesta> respuestaCollection;
-    @JoinColumn(name = "examen_id_examen", referencedColumnName = "id_examen")
+    @JoinColumn(name = "id_examen", referencedColumnName = "id_examen")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Examen examenIdExamen;
+    private Examen idExamen;
 
     public Pregunta() {
     }
@@ -168,12 +168,12 @@ public class Pregunta implements Serializable {
         this.respuestaCollection = respuestaCollection;
     }
 
-    public Examen getExamenIdExamen() {
-        return examenIdExamen;
+    public Examen getIdExamen() {
+        return idExamen;
     }
 
-    public void setExamenIdExamen(Examen examenIdExamen) {
-        this.examenIdExamen = examenIdExamen;
+    public void setIdExamen(Examen idExamen) {
+        this.idExamen = idExamen;
     }
 
     @Override

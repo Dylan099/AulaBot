@@ -6,6 +6,7 @@
 package com.example.ElAulaBot.domain;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -17,13 +18,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -97,8 +99,8 @@ public class Profesor implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "profesorIdProfesor", fetch = FetchType.LAZY)
-    private Curso curso;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProfesor", fetch = FetchType.LAZY)
+    private Collection<Curso> cursoCollection;
 
     public Profesor() {
     }
@@ -207,12 +209,13 @@ public class Profesor implements Serializable {
         this.status = status;
     }
 
-    public Curso getCurso() {
-        return curso;
+    @XmlTransient
+    public Collection<Curso> getCursoCollection() {
+        return cursoCollection;
     }
 
-    public void setCurso(Curso curso) {
-        this.curso = curso;
+    public void setCursoCollection(Collection<Curso> cursoCollection) {
+        this.cursoCollection = cursoCollection;
     }
 
     @Override

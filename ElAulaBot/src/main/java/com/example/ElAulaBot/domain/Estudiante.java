@@ -99,7 +99,7 @@ public class Estudiante implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudianteIdEstudiante", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante", fetch = FetchType.LAZY)
     private Collection<CursoHasEstudiante> cursoHasEstudianteCollection;
 
     public Estudiante() {

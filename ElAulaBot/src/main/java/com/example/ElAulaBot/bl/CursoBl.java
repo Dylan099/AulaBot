@@ -58,13 +58,13 @@ public class CursoBl {
         newCurso.setFechaCreacionCu(String.valueOf(new Date()));
         newCurso.setNombreCurso(nombreCurso);
         newCurso.setCodigoCurso(nombreCurso.toLowerCase()+" "+String.valueOf(new Date()).toLowerCase());
-        newCurso.setProfesorIdProfesor(profesor);
+        newCurso.setIdProfesor(profesor);
         newCurso.setTxhost("localhost");
         newCurso.setTxuser("admin");
         newCurso.setTxdate(new Date());
+        newCurso.setStatus(Status.ACTIVE.getStatus());
         cursoRepository.save(newCurso);
         return nombreCurso.toLowerCase()+" "+String.valueOf(new Date()).toLowerCase();
-
     }
 
 

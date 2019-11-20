@@ -95,9 +95,9 @@ public class Archivo implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @JoinColumn(name = "curso_id_curso", referencedColumnName = "id_curso")
+    @JoinColumn(name = "id_curso", referencedColumnName = "id_curso")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Curso cursoIdCurso;
+    private Curso idCurso;
 
     public Archivo() {
     }
@@ -199,12 +199,12 @@ public class Archivo implements Serializable {
         this.status = status;
     }
 
-    public Curso getCursoIdCurso() {
-        return cursoIdCurso;
+    public Curso getIdCurso() {
+        return idCurso;
     }
 
-    public void setCursoIdCurso(Curso cursoIdCurso) {
-        this.cursoIdCurso = cursoIdCurso;
+    public void setIdCurso(Curso idCurso) {
+        this.idCurso = idCurso;
     }
 
     @Override

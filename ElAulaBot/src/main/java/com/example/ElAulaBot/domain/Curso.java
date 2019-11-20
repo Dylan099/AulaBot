@@ -17,10 +17,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -80,18 +80,16 @@ public class Curso implements Serializable {
     private Date txdate;
     @Column(name = "status")
     private Integer status;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCurso", fetch = FetchType.LAZY)
     private Collection<Archivo> archivoCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
-    private Collection<Horario> horarioCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCurso", fetch = FetchType.LAZY)
     private Collection<Anuncio> anuncioCollection;
-    @JoinColumn(name = "profesor_id_profesor", referencedColumnName = "id_profesor")
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    private Profesor profesorIdProfesor;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_profesor", referencedColumnName = "id_profesor")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Profesor idProfesor;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCurso", fetch = FetchType.LAZY)
     private Collection<CursoHasEstudiante> cursoHasEstudianteCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cursoIdCurso", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCurso", fetch = FetchType.LAZY)
     private Collection<Examen> examenCollection;
 
     public Curso() {
@@ -182,15 +180,6 @@ public class Curso implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Horario> getHorarioCollection() {
-        return horarioCollection;
-    }
-
-    public void setHorarioCollection(Collection<Horario> horarioCollection) {
-        this.horarioCollection = horarioCollection;
-    }
-
-    @XmlTransient
     public Collection<Anuncio> getAnuncioCollection() {
         return anuncioCollection;
     }
@@ -199,12 +188,12 @@ public class Curso implements Serializable {
         this.anuncioCollection = anuncioCollection;
     }
 
-    public Profesor getProfesorIdProfesor() {
-        return profesorIdProfesor;
+    public Profesor getIdProfesor() {
+        return idProfesor;
     }
 
-    public void setProfesorIdProfesor(Profesor profesorIdProfesor) {
-        this.profesorIdProfesor = profesorIdProfesor;
+    public void setIdProfesor(Profesor idProfesor) {
+        this.idProfesor = idProfesor;
     }
 
     @XmlTransient
