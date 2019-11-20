@@ -67,8 +67,4 @@ public class CursoBl {
         return nombreCurso.toLowerCase()+" "+String.valueOf(new Date()).toLowerCase();
     }
 
-
-
-
-
 }
