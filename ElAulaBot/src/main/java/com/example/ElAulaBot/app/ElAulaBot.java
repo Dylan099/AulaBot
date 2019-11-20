@@ -11,6 +11,7 @@ import com.example.ElAulaBot.domain.Profesor;
 import com.example.ElAulaBot.dto.CursoDto;
 import com.example.ElAulaBot.dto.ProfesorDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -50,9 +51,9 @@ public class ElAulaBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             chatId = update.getMessage().getFrom().getId();
             user = update.getMessage().getFrom();
+            messages = usuarioBl.processUpdate(update.getMessage().getFrom(),update);
             lastMessageSent = usuarioBl.getlastMessageSent(update,user);
             lastMessageReceived = usuarioBl.getlastMessageReceived(update,user);
-            messages = usuarioBl.processUpdate(update.getMessage().getFrom(),update);
             String userMessage = update.getMessage().getText();
             switch (userMessage){
                 case "/start":
@@ -147,31 +148,38 @@ public class ElAulaBot extends TelegramLongPollingBot {
 
 
             }
-            switch (lastMessageReceived){
+            if(lastMessageReceived!=null && lastMessageSent!=null){
+                switch (lastMessageReceived){
 
-                case "Ingrese el nombre del curso a crear: ":
+                    case "Ingrese el nombre del curso a crear: ":
 
-                    chatId = update.getMessage().getFrom().getId();
-                    user = update.getMessage().getFrom();
-                    System.out.println(chatId);
-                    System.out.println(user);
-                    String nombreCurso = update.getMessage().getText();
-                    System.out.println(nombreCurso);
-
-                    //cursoBl.crearCurso(user,nombreCurso);
-
-                    List<CursoDto> lcurso = cursoBl.findAllCurso();
-                    String answerCrearCurso = "Curso Creado. BUENO NO PERO SI"+ lcurso.get(1);
-                    EditMessageText new_messageInsCurso = new EditMessageText()
-                            .setChatId(chatId)
-                            .setMessageId(toIntExact(update.getMessage().getMessageId()))
-                            .setText(answerCrearCurso);
-                    try {
-                        execute(new_messageInsCurso);
-                    } catch (TelegramApiException e) {
-                        e.printStackTrace();
-                    }
-                    break;
+                        chatId = update.getMessage().getFrom().getId();
+                        user = update.getMessage().getFrom();
+                        System.out.println(chatId);
+                        System.out.println(user);
+                        String nombreCurso = update.getMessage().getText();
+                        System.out.println(nombreCurso);
+                        String answerCrearCurso = "";
+                        try{
+                            String codigo = cursoBl.crearCurso(user,nombreCurso);
+                            answerCrearCurso = "Curso Creado. Codigo del curso -> "+ codigo;
+                        }catch (DataIntegrityViolationException e){
+                            answerCrearCurso = "Curso ya existente";
+                        }
+                        SendMessage new_messageInsCurso = new SendMessage()
+                                .setChatId(chatId)
+                                .setText(answerCrearCurso);
+                        try {
+                            execute(new_messageInsCurso);
+                            usuarioBl.setlastMessageReceived(update,user,new_messageInsCurso.getText());
+                            usuarioBl.setlastMessageSent(update,user,nombreCurso);
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "ALGO MAS IRA AQUI ":
+                        break;
+                }
             }
 
         } else if (update.hasCallbackQuery()) {

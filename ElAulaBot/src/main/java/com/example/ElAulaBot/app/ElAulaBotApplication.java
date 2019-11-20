@@ -23,7 +23,7 @@ public class ElAulaBotApplication {
 	UsuarioBl usuarioBl;
 
 	@Autowired
-	public ElAulaBotApplication(ProfesorBl profesorBl, EstudianteBl estudianteBl,UsuarioBl usuarioBl) {
+	public ElAulaBotApplication(ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl, UsuarioBl usuarioBl) {
 		this.profesorBl = profesorBl;
 		this.estudianteBl = estudianteBl;
 		this.cursoBl = cursoBl;

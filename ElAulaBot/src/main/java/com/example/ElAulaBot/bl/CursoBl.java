@@ -21,6 +21,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 @Service
+@Transactional
 public class CursoBl {
     CursoRepository cursoRepository;
     ProfesorRepository profesorRepository;
@@ -49,20 +50,21 @@ public class CursoBl {
         return cursoDtos;
     }
 
-    public void crearCurso (User user, String nombreCurso)
+    public String crearCurso (User user, String nombreCurso)
     {
         LOGGER.info("CREANDO CURSO "+nombreCurso);
         Curso newCurso = new Curso();
         Profesor profesor = this.profesorRepository.findProfesorByChatId(user.getId());
         newCurso.setFechaCreacionCu(String.valueOf(new Date()));
         newCurso.setNombreCurso(nombreCurso);
-        newCurso.setCodigoCurso(nombreCurso+String.valueOf(new Date())+String.valueOf(user.getId()));
+        newCurso.setCodigoCurso(nombreCurso.toLowerCase()+" "+String.valueOf(new Date()).toLowerCase());
         newCurso.setProfesorIdProfesor(profesor);
         newCurso.setTxhost("localhost");
         newCurso.setTxuser("admin");
         newCurso.setTxdate(new Date());
         cursoRepository.save(newCurso);
-        //String codigoCurso = nombreCurso+String.valueOf(new Date())+String.valueOf(user.getId());
+        return nombreCurso.toLowerCase()+" "+String.valueOf(new Date()).toLowerCase();
+
     }
 
 
