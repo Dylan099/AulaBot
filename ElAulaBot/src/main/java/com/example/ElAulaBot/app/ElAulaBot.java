@@ -1,9 +1,6 @@
 package com.example.ElAulaBot.app;
 
-import com.example.ElAulaBot.bl.CursoBl;
-import com.example.ElAulaBot.bl.EstudianteBl;
-import com.example.ElAulaBot.bl.ProfesorBl;
-import com.example.ElAulaBot.bl.UsuarioBl;
+import com.example.ElAulaBot.bl.*;
 import com.example.ElAulaBot.dao.CursoRepository;
 import com.example.ElAulaBot.dao.ProfesorRepository;
 import com.example.ElAulaBot.domain.Curso;
@@ -32,13 +29,15 @@ public class ElAulaBot extends TelegramLongPollingBot {
     CursoBl cursoBl;
     EstudianteBl estudianteBl;
     UsuarioBl usuarioBl;
+    CursoEstudianteBl cursoEstudianteBl;
 
     @Autowired
-    public ElAulaBot(ProfesorBl profesorBl, EstudianteBl estudianteBl, CursoBl cursoBl,UsuarioBl usuarioBl) {
+    public ElAulaBot(ProfesorBl profesorBl, EstudianteBl estudianteBl, CursoBl cursoBl, UsuarioBl usuarioBl, CursoEstudianteBl cursoEstudianteBl) {
         this.profesorBl = profesorBl;
         this.estudianteBl = estudianteBl;
         this.cursoBl = cursoBl;
         this.usuarioBl = usuarioBl;
+        this.cursoEstudianteBl = cursoEstudianteBl;
     }
 
     private long chatId;
@@ -177,7 +176,34 @@ public class ElAulaBot extends TelegramLongPollingBot {
                             e.printStackTrace();
                         }
                         break;
-                    case "ALGO MAS IRA AQUI ":
+                    case "Ingrese el codigo de curso al que desea inscribirse: ":
+
+                        chatId = update.getMessage().getFrom().getId();
+                        user = update.getMessage().getFrom();
+                        String codigoCurso = update.getMessage().getText();
+                        String answerIncribirCurso = "";
+                        try{
+                            String nomCur = cursoEstudianteBl.incribirCurso(user, codigoCurso);
+                            if (nomCur == ""){
+                                answerIncribirCurso = "Curso no existente";
+                            }else{
+                                answerIncribirCurso = "Te uniste al curso -> "+nomCur;
+                            }
+
+                        }catch (DataIntegrityViolationException e){
+                            answerIncribirCurso = "Curso no existente";
+                        }
+                        SendMessage message1 = new SendMessage()
+                                .setChatId(chatId)
+                                .setText(answerIncribirCurso);
+                        try {
+                            execute(message1);
+                            usuarioBl.setlastMessageReceived(update,user,message1.getText());
+                            usuarioBl.setlastMessageSent(update,user,codigoCurso);
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
+
                         break;
                 }
             }
@@ -239,7 +265,7 @@ public class ElAulaBot extends TelegramLongPollingBot {
                     }
                 break;
                 case "inscripcion":
-                    answer = "Ingrese el codigo del curso al que desea inscribirse: ";
+                    answer = "Ingrese el codigo de curso al que desea inscribirse: ";
                     EditMessageText new_messageInsCurso = new EditMessageText()
                             .setChatId(chat_id)
                             .setMessageId(toIntExact(message_id))
