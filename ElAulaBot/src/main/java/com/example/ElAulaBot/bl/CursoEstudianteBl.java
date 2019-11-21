@@ -65,5 +65,12 @@ public class CursoEstudianteBl {
         }
     }
 
+    public List<CursoHasEstudiante> cursosPorEstudiante(User user){
+        Estudiante estudiante=this.estudianteRepository.findEstudianteByChatId(user.getId());
+        LOGGER.info("Buscando cursos activos para el estudiante "+estudiante.getPrimerNombreEs());
+        List<CursoHasEstudiante> resultado = this.cursoEstudianteRepository.findAllByIdEstudianteAndStatus(estudiante,1);
+        return resultado;
+    }
+
 
 }

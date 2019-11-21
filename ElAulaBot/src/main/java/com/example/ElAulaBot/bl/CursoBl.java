@@ -3,6 +3,7 @@ package com.example.ElAulaBot.bl;
 import com.example.ElAulaBot.dao.CursoRepository;
 import com.example.ElAulaBot.dao.ProfesorRepository;
 import com.example.ElAulaBot.domain.Curso;
+import com.example.ElAulaBot.domain.CursoHasEstudiante;
 import com.example.ElAulaBot.domain.Profesor;
 import com.example.ElAulaBot.dto.CursoDto;
 import com.example.ElAulaBot.dto.ProfesorDto;
@@ -66,5 +67,23 @@ public class CursoBl {
         cursoRepository.save(newCurso);
         return nombreCurso.toLowerCase()+" "+String.valueOf(new Date()).toLowerCase();
     }
+    public List<Curso> cursosbyIdProf(User user){
+        Profesor profesor=this.profesorRepository.findProfesorByChatId(user.getId());
+        LOGGER.info("Buscando cursos activos para el profesor "+profesor.getPrimerNombrePr());
+        List<Curso> resultado = this.cursoRepository.findAllByIdProfesorAndStatus(profesor,1);
+        return resultado;
+    }
+    public List<Curso> cursosbyEst(List<CursoHasEstudiante> cursoHasEstudiantes){
+        List<Curso> resultado = new ArrayList<>();
+        for (CursoHasEstudiante chs:cursoHasEstudiantes) {
+            Curso curso=this.cursoRepository.findCursoByIdCurso(chs.getIdCurso().getIdCurso());
+            if(curso!=null)
+                resultado.add(curso);
+            else
+                System.out.println("Cursos Vacios");
+        }
+        return resultado;
+    }
+
 
 }

@@ -8,7 +8,9 @@ import java.util.List;
 
 public interface CursoRepository extends JpaRepository<Curso,Integer> {
     List<Curso> findAllByStatus(int status);
-    //Curso findCursoByChatId(int chatId);
+    List<Curso> findAllByIdProfesorAndStatus(Profesor idProf, Integer status);
+    List<Curso> findAllByIdCursoAndStatus(Curso curso, Integer status);
+    Curso findCursoByIdCurso(int idCurso);
     Curso findCursoByCodigoCurso(String codigoCurso);
 
 }

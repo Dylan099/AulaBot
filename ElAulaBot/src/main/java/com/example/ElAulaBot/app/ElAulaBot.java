@@ -4,6 +4,7 @@ import com.example.ElAulaBot.bl.*;
 import com.example.ElAulaBot.dao.CursoRepository;
 import com.example.ElAulaBot.dao.ProfesorRepository;
 import com.example.ElAulaBot.domain.Curso;
+import com.example.ElAulaBot.domain.CursoHasEstudiante;
 import com.example.ElAulaBot.domain.Profesor;
 import com.example.ElAulaBot.dto.CursoDto;
 import com.example.ElAulaBot.dto.ProfesorDto;
@@ -95,7 +96,7 @@ public class ElAulaBot extends TelegramLongPollingBot {
                         List<List<InlineKeyboardButton>> rowsInlineCurso = new ArrayList<>();
                         List<InlineKeyboardButton> rowInlineCurso = new ArrayList<>();
                         rowInlineCurso.add(new InlineKeyboardButton().setText("Crear Curso").setCallbackData("crear"));
-                        rowInlineCurso.add(new InlineKeyboardButton().setText("Ver Cursos").setCallbackData("ver"));
+                        rowInlineCurso.add(new InlineKeyboardButton().setText("Ver Cursos").setCallbackData("verCursosProf"));
 
                         rowsInlineCurso.add(rowInlineCurso);
 
@@ -279,7 +280,56 @@ public class ElAulaBot extends TelegramLongPollingBot {
                     }
 
                     break;
+                case "verCursosProf":
+                    List<Curso> listCursosProf = cursoBl.cursosbyIdProf(user);
+                    SendMessage messageCursoProf = new SendMessage()
+                            .setChatId(chatId)
+                            .setText("Estos son sus cursos disponibles:");
+
+                    InlineKeyboardMarkup markupInlineCurso = new InlineKeyboardMarkup();
+                    List<List<InlineKeyboardButton>> rowsInlineCurso = new ArrayList<>();
+                    List<InlineKeyboardButton> rowInlineCurso = new ArrayList<>();
+                    for (Curso curso:listCursosProf) {
+                        rowInlineCurso.add(new InlineKeyboardButton().setText(curso.getNombreCurso()).setCallbackData("cursosProf"));
+                    }
+
+                    rowsInlineCurso.add(rowInlineCurso);
+
+                    markupInlineCurso.setKeyboard(rowsInlineCurso);
+                    messageCursoProf.setReplyMarkup(markupInlineCurso);
+                    try {
+                        execute(messageCursoProf);
+                    }catch (TelegramApiException e){
+                        e.printStackTrace();
+                    }
+                    break;
                 case "verCursosEst":
+                    List<CursoHasEstudiante> listCursosEst = cursoEstudianteBl.cursosPorEstudiante(user);
+                    List<Curso> listFinal = cursoBl.cursosbyEst(listCursosEst);
+                    SendMessage messageCursoEst = new SendMessage()
+                            .setChatId(chatId)
+                            .setText("Estos son sus cursos disponibles:");
+
+                    InlineKeyboardMarkup markupInlineCursoEst = new InlineKeyboardMarkup();
+                    List<List<InlineKeyboardButton>> rowsInlineCursoEst = new ArrayList<>();
+                    List<InlineKeyboardButton> rowInlineCursoEst = new ArrayList<>();
+                    for (Curso curso:listFinal) {
+                        rowInlineCursoEst.add(new InlineKeyboardButton().setText(curso.getNombreCurso()).setCallbackData(curso.getCodigoCurso()));
+                    }
+
+                    rowsInlineCursoEst.add(rowInlineCursoEst);
+
+                    markupInlineCursoEst.setKeyboard(rowsInlineCursoEst);
+                    messageCursoEst.setReplyMarkup(markupInlineCursoEst);
+                    try {
+                        execute(messageCursoEst);
+                    }catch (TelegramApiException e){
+                        e.printStackTrace();
+                    }
+                    break;
+                case "cursosProf":
+                    System.out.println("AVER SI FUNCIONA ------->"+update.getCallbackQuery().getMessage().getText());
+                    break;
 
 
             }
