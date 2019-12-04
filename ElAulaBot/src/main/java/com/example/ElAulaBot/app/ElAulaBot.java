@@ -51,7 +51,7 @@ public class ElAulaBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             chatId = update.getMessage().getFrom().getId();
             user = update.getMessage().getFrom();
-            messages = usuarioBl.processUpdate(update.getMessage().getFrom(),update);
+            messages = usuarioBl.processUpdate(user,update);
             lastMessageSent = usuarioBl.getlastMessageSent(update,user);
             lastMessageReceived = usuarioBl.getlastMessageReceived(update,user);
             String userMessage = update.getMessage().getText();

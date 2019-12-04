@@ -47,8 +47,43 @@ public class UsuarioBl {
         return usuarioList;
     }
 
-    private boolean initUsuario(User user, Update update) {
-            boolean result = false;
+    public List<String> processUpdate(User user,Update update) {
+        LOGGER.info("Recibiendo update {} ", update);
+        List<String> chatResponse = new ArrayList<>();
+        Usuario usuario = initUsuario(user,update);
+        continueChatWithUser(update, user, chatResponse, usuario);
+        return chatResponse;
+    }
+
+    private void continueChatWithUser(Update update, User user, List<String> chatResponse,Usuario usuario) {
+        // Obtener el ultimo mensaje que envió el usuario
+        Usuario lastMessage = usuarioRepository.findLastChatByUserId(usuario.getIdUser());
+        LOGGER.info("Primer mensaje del usuario botUserId{}", user.getId());
+        // Preparo la vaiable para retornar la respuesta
+        String response = null;
+        // Si el ultimo mensaje no existe (es la primera conversación)
+        if (lastMessage == null) {
+            // Retornamos 1
+            LOGGER.info("Primer mensaje del usuario botUserId{}", usuario.getIdUser());
+            response = "1";
+        } else {
+            // Si existe convesasción previa iniciamos la variable del ultimo mensaje en 1
+            int lastMessageInt = 0;
+            try {
+                // Intenemos obtener el ultimo mensaje retornado y lo convertimos a entero.
+                // Si la coversin falla en el catch retornamos 1
+                lastMessageInt = Integer.parseInt(lastMessage.getLastMessageSent());
+                response = "" + (lastMessageInt + 1);
+            } catch (NumberFormatException nfe) {
+                response = "1";
+            }
+        }
+        LOGGER.info("PROCESSING IN MESSAGE: {} from user {}" ,update.getMessage().getText(), usuario.getIdUser());
+
+        chatResponse.add(response);
+    }
+
+    private Usuario initUsuario(User user, Update update) {
             Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
             if (usuario == null) {
                 Usuario nuevoUsuario =new Usuario();
@@ -59,8 +94,10 @@ public class UsuarioBl {
                 nuevoUsuario.setTxuser("admin");
                 nuevoUsuario.setTxdate(new Date());
                 usuarioRepository.save(nuevoUsuario);
+
             }
-            return result;
+
+        return usuario;
     }
     public String getlastMessageReceived(Update update, User user){
         Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
@@ -84,21 +121,8 @@ public class UsuarioBl {
 
 
 
-    public List<String> processUpdate(User user,Update update) {
-        LOGGER.info("Recibiendo solicitud {} ", user);
-        List<String> result = new ArrayList<>();
 
-        if (initUsuario(user,update)) {
-            LOGGER.info("Primer inicio de sesion para: {} ",user );
-            result.add("Registrado con exito");
-        } else { // Mostrar el menu de opciones
-            LOGGER.info("Dando bienvenida a: {} ",user );
-            result.add("/start");
-        }
 
-        //continueChatWihtUser(CpUser, CpChat)
 
-        return result;
-    }
 
 }
