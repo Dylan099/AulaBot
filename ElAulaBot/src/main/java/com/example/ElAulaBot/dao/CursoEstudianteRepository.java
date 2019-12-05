@@ -1,5 +1,6 @@
 package com.example.ElAulaBot.dao;
 
+import com.example.ElAulaBot.domain.Curso;
 import com.example.ElAulaBot.domain.CursoHasEstudiante;
 import com.example.ElAulaBot.domain.Estudiante;
 import com.example.ElAulaBot.dto.CursoEstudianteDto;
@@ -11,4 +12,5 @@ public interface CursoEstudianteRepository extends JpaRepository<CursoHasEstudia
     List<CursoHasEstudiante> findAllByStatus(int Status);
     CursoEstudianteDto findCursoHasEstudianteByIdEstudiante(Integer idEstudiante);
     List<CursoHasEstudiante> findAllByIdEstudianteAndStatus(Estudiante estudiante, Integer status);
+    CursoHasEstudiante findCursoHasEstudianteByIdEstudianteAndIdCurso(Estudiante estudiante, Curso curso);
 }

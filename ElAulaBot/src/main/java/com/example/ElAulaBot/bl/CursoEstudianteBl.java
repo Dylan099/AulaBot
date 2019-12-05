@@ -72,5 +72,16 @@ public class CursoEstudianteBl {
         return resultado;
     }
 
+    public boolean verificarEstudiante(User user, String codigoCurso){
+        boolean estado = false;
+        Estudiante estudiante = this.estudianteRepository.findEstudianteByChatId(user.getId());
+        Curso curso = this.cursoRepository.findCursoByCodigoCurso(codigoCurso);
+        CursoHasEstudiante cursoHasEstudiante = this.cursoEstudianteRepository.findCursoHasEstudianteByIdEstudianteAndIdCurso(estudiante,curso);
+        if (cursoHasEstudiante != null){
+            estado = true;
+        }
+        return estado;
+    }
+
 
 }

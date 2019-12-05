@@ -183,17 +183,23 @@ public class ElAulaBot extends TelegramLongPollingBot {
                         user = update.getMessage().getFrom();
                         String codigoCurso = update.getMessage().getText();
                         String answerIncribirCurso = "";
-                        try{
-                            String nomCur = cursoEstudianteBl.incribirCurso(user, codigoCurso);
-                            if (nomCur == ""){
-                                answerIncribirCurso = "Curso no existente";
-                            }else{
-                                answerIncribirCurso = "Te uniste al curso -> "+nomCur;
-                            }
 
-                        }catch (DataIntegrityViolationException e){
-                            answerIncribirCurso = "Curso no existente";
+                        if (cursoEstudianteBl.verificarEstudiante(user,codigoCurso)){
+                            answerIncribirCurso = "Ya perteneces a este grupo, porfavor ingresa un codigo valido.";
+                        }else{
+                            try{
+                                String nomCur = cursoEstudianteBl.incribirCurso(user, codigoCurso);
+                                if (nomCur == ""){
+                                    answerIncribirCurso = "Curso no existente";
+                                }else{
+                                    answerIncribirCurso = "Te uniste al curso -> "+nomCur;
+                                }
+
+                            }catch (DataIntegrityViolationException e){
+                                answerIncribirCurso = "Curso no existente";
+                            }
                         }
+
                         SendMessage message1 = new SendMessage()
                                 .setChatId(chatId)
                                 .setText(answerIncribirCurso);
