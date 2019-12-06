@@ -10,6 +10,7 @@ import com.google.inject.internal.cglib.core.$DuplicatesPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -29,12 +30,13 @@ public class UsuarioBl {
     UsuarioRepository usuarioRepository;
     ProfesorBl profesorBl;
     EstudianteBl estudianteBl;
+    CursoBl cursoBl;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioBl.class);
 
     @Autowired
-    public UsuarioBl(UsuarioRepository usuarioRepository, ProfesorBl profesorBl, EstudianteBl estudianteBl) { this.usuarioRepository = usuarioRepository;
-    this.profesorBl = profesorBl; this.estudianteBl = estudianteBl;}
+    public UsuarioBl(UsuarioRepository usuarioRepository, ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl) { this.usuarioRepository = usuarioRepository;
+    this.profesorBl = profesorBl; this.estudianteBl = estudianteBl; this.cursoBl = cursoBl;}
 
     public Usuario findUsuarioByChatId(String chatId){
         Usuario usuario = this.usuarioRepository.findUsuarioByChatId(chatId);
@@ -99,6 +101,16 @@ public class UsuarioBl {
                             .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
                             .setText(answer);
                     break;
+                case "crear":
+
+                    answer = "Ingrese el nombre del curso a crear: ";
+                    chatResponse = new EditMessageText()
+                            .setChatId(lastMessage.getChatId())
+                            .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                            .setText(answer);
+                    break;
+
+
             }
         }
         LOGGER.info("PROCESSING IN MESSAGE: {} from user {}" ,update.getCallbackQuery().getData(), usuario.getIdUser());
@@ -132,6 +144,64 @@ public class UsuarioBl {
                     rowsInline.add(rowInline);
                     markupInline.setKeyboard(rowsInline);
                     chatResponse.setReplyMarkup(markupInline);
+                    break;
+                case "/curso":
+
+                    // Verificacion de que el usuario es un profesor y no un estudiante
+                    if(profesorBl.findProfesorByChatId(update.getMessage().getFrom().getId())!=null){
+
+                        chatResponse = new SendMessage()
+                                .setChatId(lastMessage.getChatId())
+                                .setText("Que desea hacer:");
+
+                        InlineKeyboardMarkup markupInlineCurso = new InlineKeyboardMarkup();
+                        List<List<InlineKeyboardButton>> rowsInlineCurso = new ArrayList<>();
+                        List<InlineKeyboardButton> rowInlineCurso = new ArrayList<>();
+                        rowInlineCurso.add(new InlineKeyboardButton().setText("Crear Curso").setCallbackData("crear"));
+                        rowInlineCurso.add(new InlineKeyboardButton().setText("Ver Cursos").setCallbackData("verCursosProf"));
+
+                        rowsInlineCurso.add(rowInlineCurso);
+
+                        markupInlineCurso.setKeyboard(rowsInlineCurso);
+                        chatResponse.setReplyMarkup(markupInlineCurso);
+                    } else  if(estudianteBl.findEstudianteByChatId(update.getMessage().getFrom().getId())!=null){
+
+                        chatResponse = new SendMessage()
+                                .setChatId(lastMessage.getChatId())
+                                .setText("Que desea hacer:");
+
+                        InlineKeyboardMarkup markupInlineCurso = new InlineKeyboardMarkup();
+                        List<List<InlineKeyboardButton>> rowsInlineCurso = new ArrayList<>();
+                        List<InlineKeyboardButton> rowInlineCurso = new ArrayList<>();
+                        rowInlineCurso.add(new InlineKeyboardButton().setText("Inscribirse a un Curso").setCallbackData("inscripcion"));
+                        rowInlineCurso.add(new InlineKeyboardButton().setText("Ver Cursos").setCallbackData("verCursosEst"));
+
+                        rowsInlineCurso.add(rowInlineCurso);
+
+                        markupInlineCurso.setKeyboard(rowsInlineCurso);
+                        chatResponse.setReplyMarkup(markupInlineCurso);
+                    } else {
+                        chatResponse = new SendMessage()
+                                .setChatId(lastMessage.getChatId())
+                                .setText("Usted no esta inscrito, por favor inicie el comando /start.");
+                    }
+                    break;
+
+            }
+            switch (lastMessage.getLastMessageReceived()){
+                case "Ingrese el nombre del curso a crear: ":
+                    String nombreCurso = lastSent;
+                    System.out.println(nombreCurso);
+                    String answerCrearCurso = "";
+                    try{
+                        String codigo = cursoBl.crearCurso(update.getMessage().getFrom(),nombreCurso);
+                        answerCrearCurso = "Curso Creado. Codigo del curso -> "+ codigo;
+                    }catch (DataIntegrityViolationException e){
+                        answerCrearCurso = "Curso ya existente";
+                    }
+                    chatResponse = new SendMessage()
+                            .setChatId(lastMessage.getChatId())
+                            .setText(answerCrearCurso);
                     break;
             }
         }
