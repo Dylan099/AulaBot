@@ -1,16 +1,23 @@
 package com.example.ElAulaBot.bl;
 
 import com.example.ElAulaBot.dao.UsuarioRepository;
+import com.example.ElAulaBot.domain.Estudiante;
+import com.example.ElAulaBot.domain.Profesor;
 import com.example.ElAulaBot.domain.Usuario;
 import com.example.ElAulaBot.dto.Status;
 import com.example.ElAulaBot.dto.UsuarioDto;
+import com.google.inject.internal.cglib.core.$DuplicatesPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,11 +27,14 @@ import java.util.List;
 @Transactional
 public class UsuarioBl {
     UsuarioRepository usuarioRepository;
+    ProfesorBl profesorBl;
+    EstudianteBl estudianteBl;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioBl.class);
 
     @Autowired
-    public UsuarioBl(UsuarioRepository usuarioRepository) { this.usuarioRepository = usuarioRepository; }
+    public UsuarioBl(UsuarioRepository usuarioRepository, ProfesorBl profesorBl, EstudianteBl estudianteBl) { this.usuarioRepository = usuarioRepository;
+    this.profesorBl = profesorBl; this.estudianteBl = estudianteBl;}
 
     public Usuario findUsuarioByChatId(String chatId){
         Usuario usuario = this.usuarioRepository.findUsuarioByChatId(chatId);
@@ -47,32 +57,85 @@ public class UsuarioBl {
         return usuarioList;
     }
 
-    public String processUpdate(Update update) {
+    public SendMessage processUpdate(Update update) {
         LOGGER.info("Recibiendo update {} ", update);
         Usuario usuario = initUsuario(update);
-        String algo = continueChatWithUser(update, usuario);
         setlastMessageSent(update,update.getMessage().getText());
-        setlastMessageReceived(update,algo);
+        SendMessage algo = continueChatWithUser(update, usuario);
+        setlastMessageReceived(update,algo.getText());
         return algo;
     }
 
-    private String continueChatWithUser(Update update,Usuario usuario) {
-        // Obtener el ultimo mensaje que envió el usuario
+    public EditMessageText processCallBack(Update update){
+        LOGGER.info("Recibiendo update {} ", update);
+        Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(update.getCallbackQuery().getFrom().getId()));
+        setlastCallbackSent(update,update.getCallbackQuery().getData());
+        EditMessageText algo = continueCallBack(update, usuario);
+        setlastCallbackReceived(update,algo.getText());
+        return algo;
+    }
+
+    private EditMessageText continueCallBack (Update update, Usuario usuario){
         Usuario lastMessage = usuarioRepository.findLastChatByUserId(usuario.getIdUser());
         System.out.println("AQUIIIIII______________>"+lastMessage.getLastMessageSent()+"  "+lastMessage.getLastMessageReceived());
-        LOGGER.info("Primer mensaje del usuario botUserId{}", update.getMessage().getFrom().getId());
+        LOGGER.info("Primer mensaje del usuario botUserId{}", update.getCallbackQuery().getFrom().getId());
         // Preparo la vaiable para retornar la respuesta
         // Si el ultimo mensaje no existe (es la primera conversación)
-        String chatResponse=null;
+        EditMessageText chatResponse=null;
 
         if (lastMessage == null) {
             // Retornamos 1
             LOGGER.info("Primer mensaje del usuario botUserId{}", usuario.getIdUser());
-            chatResponse = "1";
+            chatResponse.setChatId(lastMessage.getChatId()).setText("1");
         } else {
-            chatResponse = lastMessage.getLastMessageSent();
+            String lastSent = update.getCallbackQuery().getData();
+            switch (lastSent){
+                case "profesor":
+                    List<String> messages = profesorBl.processUpdate(update.getCallbackQuery().getFrom());
+                    String answer = "Gracias por registrarte "+" como profesor. ";
+                    answer+= " ID -> "+lastMessage.getChatId();
+                    chatResponse = new EditMessageText()
+                            .setChatId(lastMessage.getChatId())
+                            .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                            .setText(answer);
+                    break;
+            }
         }
-        LOGGER.info("PROCESSING IN MESSAGE: {} from user {}" ,update.getMessage().getText(), usuario.getIdUser());
+        LOGGER.info("PROCESSING IN MESSAGE: {} from user {}" ,update.getCallbackQuery().getData(), usuario.getIdUser());
+        return chatResponse;
+    }
+
+    private SendMessage continueChatWithUser(Update update,Usuario lastMessage) {
+        // Obtener el ultimo mensaje que envió el usuario
+        LOGGER.info("Primer mensaje del usuario botUserId{}", update.getMessage().getFrom().getId());
+        // Preparo la vaiable para retornar la respuesta
+        // Si el ultimo mensaje no existe (es la primera conversación)
+        SendMessage chatResponse=null;
+
+        if (lastMessage == null) {
+            // Retornamos 1
+            LOGGER.info("Primer mensaje del usuario botUserId{}", lastMessage.getIdUser());
+            chatResponse.setChatId(lastMessage.getChatId()).setText("1");
+        } else {
+            String lastSent = lastMessage.getLastMessageSent();
+            switch (lastSent){
+                case "/start":
+                    chatResponse = new SendMessage()
+                            .setChatId(lastMessage.getChatId())
+                            .setText("Bienvenido como desea registrarse : " + " ID -> "+update.getMessage().getFrom().getId());
+                    InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+                    List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+                    List<InlineKeyboardButton> rowInline = new ArrayList<>();
+                    rowInline.add(new InlineKeyboardButton().setText("Profesor").setCallbackData("profesor"));
+                    rowInline.add(new InlineKeyboardButton().setText("Estudiante").setCallbackData("estudiante"));
+
+                    rowsInline.add(rowInline);
+                    markupInline.setKeyboard(rowsInline);
+                    chatResponse.setReplyMarkup(markupInline);
+                    break;
+            }
+        }
+        LOGGER.info("PROCESSING IN MESSAGE: {} from user {}" ,update.getMessage().getText(), lastMessage.getIdUser());
         return chatResponse;
     }
 
@@ -82,12 +145,12 @@ public class UsuarioBl {
                 Usuario nuevoUsuario =new Usuario();
                 nuevoUsuario.setChatId(String.valueOf(update.getMessage().getFrom().getId()));
                 nuevoUsuario.setLastMessageSent(update.getMessage().getText());
-                nuevoUsuario.setLastMessageReceived(null);
+                nuevoUsuario.setLastMessageReceived("");
                 nuevoUsuario.setTxhost("localhost");
                 nuevoUsuario.setTxuser("admin");
                 nuevoUsuario.setTxdate(new Date());
                 usuarioRepository.save(nuevoUsuario);
-
+                return nuevoUsuario;
             }
 
         return usuario;
@@ -109,6 +172,18 @@ public class UsuarioBl {
 
     public void setlastMessageSent(Update update, String messageSent){
         User user = update.getMessage().getFrom();
+        Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
+        usuario.setLastMessageSent(messageSent);
+    }
+
+    public void setlastCallbackReceived(Update update, String messageReceived){
+        User user = update.getCallbackQuery().getFrom();
+        Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
+        usuario.setLastMessageReceived(messageReceived);
+    }
+
+    public void setlastCallbackSent(Update update, String messageSent){
+        User user = update.getCallbackQuery().getFrom();
         Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
         usuario.setLastMessageSent(messageSent);
     }

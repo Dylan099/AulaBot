@@ -49,17 +49,24 @@ public class ElAulaBot extends TelegramLongPollingBot {
 
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
-            String nose = usuarioBl.processUpdate(update);
-            SendMessage message = new SendMessage()
-                    .setChatId(update.getMessage().getChatId())
-                    .setText(nose);
+            SendMessage message = usuarioBl.processUpdate(update);
             try {
                 execute(message);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
+        } else if(update.hasCallbackQuery()){
+            System.out.println(update.getCallbackQuery().getMessage().getText());
+            EditMessageText messageText = usuarioBl.processCallBack(update);
+            try {
+                execute(messageText);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-            /*
+    /*
             chatId = update.getMessage().getFrom().getId();
             user = update.getMessage().getFrom();
             messages = usuarioBl.processUpdate(user,update);
@@ -350,8 +357,6 @@ public class ElAulaBot extends TelegramLongPollingBot {
 
 
             }*/
-        }
-    }
 
     public String getBotUsername() {
         return "ElAulaBot";
