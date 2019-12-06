@@ -47,47 +47,40 @@ public class UsuarioBl {
         return usuarioList;
     }
 
-    public List<String> processUpdate(User user,Update update) {
+    public String processUpdate(Update update) {
         LOGGER.info("Recibiendo update {} ", update);
-        List<String> chatResponse = new ArrayList<>();
-        Usuario usuario = initUsuario(user,update);
-        continueChatWithUser(update, user, chatResponse, usuario);
-        return chatResponse;
+        Usuario usuario = initUsuario(update);
+        String algo = continueChatWithUser(update, usuario);
+        setlastMessageSent(update,update.getMessage().getText());
+        setlastMessageReceived(update,algo);
+        return algo;
     }
 
-    private void continueChatWithUser(Update update, User user, List<String> chatResponse,Usuario usuario) {
+    private String continueChatWithUser(Update update,Usuario usuario) {
         // Obtener el ultimo mensaje que envió el usuario
         Usuario lastMessage = usuarioRepository.findLastChatByUserId(usuario.getIdUser());
-        LOGGER.info("Primer mensaje del usuario botUserId{}", user.getId());
+        System.out.println("AQUIIIIII______________>"+lastMessage.getLastMessageSent()+"  "+lastMessage.getLastMessageReceived());
+        LOGGER.info("Primer mensaje del usuario botUserId{}", update.getMessage().getFrom().getId());
         // Preparo la vaiable para retornar la respuesta
-        String response = null;
         // Si el ultimo mensaje no existe (es la primera conversación)
+        String chatResponse=null;
+
         if (lastMessage == null) {
             // Retornamos 1
             LOGGER.info("Primer mensaje del usuario botUserId{}", usuario.getIdUser());
-            response = "1";
+            chatResponse = "1";
         } else {
-            // Si existe convesasción previa iniciamos la variable del ultimo mensaje en 1
-            int lastMessageInt = 0;
-            try {
-                // Intenemos obtener el ultimo mensaje retornado y lo convertimos a entero.
-                // Si la coversin falla en el catch retornamos 1
-                lastMessageInt = Integer.parseInt(lastMessage.getLastMessageSent());
-                response = "" + (lastMessageInt + 1);
-            } catch (NumberFormatException nfe) {
-                response = "1";
-            }
+            chatResponse = lastMessage.getLastMessageSent();
         }
         LOGGER.info("PROCESSING IN MESSAGE: {} from user {}" ,update.getMessage().getText(), usuario.getIdUser());
-
-        chatResponse.add(response);
+        return chatResponse;
     }
 
-    private Usuario initUsuario(User user, Update update) {
-            Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
+    private Usuario initUsuario(Update update) {
+            Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(update.getMessage().getFrom().getId()));
             if (usuario == null) {
                 Usuario nuevoUsuario =new Usuario();
-                nuevoUsuario.setChatId(String.valueOf(user.getId()));
+                nuevoUsuario.setChatId(String.valueOf(update.getMessage().getFrom().getId()));
                 nuevoUsuario.setLastMessageSent(update.getMessage().getText());
                 nuevoUsuario.setLastMessageReceived(null);
                 nuevoUsuario.setTxhost("localhost");
@@ -108,12 +101,14 @@ public class UsuarioBl {
         Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
         return usuario.getLastMessageSent();
     }
-    public void setlastMessageReceived(Update update, User user,String messageReceived){
+    public void setlastMessageReceived(Update update, String messageReceived){
+        User user = update.getMessage().getFrom();
         Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
         usuario.setLastMessageReceived(messageReceived);
     }
 
-    public void setlastMessageSent(Update update, User user,String messageSent){
+    public void setlastMessageSent(Update update, String messageSent){
+        User user = update.getMessage().getFrom();
         Usuario usuario = usuarioRepository.findUsuarioByChatId(String.valueOf(user.getId()));
         usuario.setLastMessageSent(messageSent);
     }

@@ -11,5 +11,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario,Integer> {
     Usuario findUsuarioByChatId(String chatId);
     @Query(value = "SELECT * FROM usuario where  id_user = ? ORDER BY chat_id DESC LIMIT 1", nativeQuery = true)
     Usuario findLastChatByUserId(Integer userId);
+    @Query(value = "UPDATE FROM usuario set last_message_sent = ? where id_usuario =?", nativeQuery = true)
+    Usuario updateLastSent(String n, Integer idUser);
 
 }
