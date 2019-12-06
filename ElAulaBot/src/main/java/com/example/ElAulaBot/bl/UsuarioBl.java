@@ -1,9 +1,7 @@
 package com.example.ElAulaBot.bl;
 
 import com.example.ElAulaBot.dao.UsuarioRepository;
-import com.example.ElAulaBot.domain.Estudiante;
-import com.example.ElAulaBot.domain.Profesor;
-import com.example.ElAulaBot.domain.Usuario;
+import com.example.ElAulaBot.domain.*;
 import com.example.ElAulaBot.dto.Status;
 import com.example.ElAulaBot.dto.UsuarioDto;
 import com.google.inject.internal.cglib.core.$DuplicatesPredicate;
@@ -30,13 +28,14 @@ public class UsuarioBl {
     UsuarioRepository usuarioRepository;
     ProfesorBl profesorBl;
     EstudianteBl estudianteBl;
+    CursoEstudianteBl cursoEstudianteBl;
     CursoBl cursoBl;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioBl.class);
 
     @Autowired
-    public UsuarioBl(UsuarioRepository usuarioRepository, ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl) { this.usuarioRepository = usuarioRepository;
-    this.profesorBl = profesorBl; this.estudianteBl = estudianteBl; this.cursoBl = cursoBl;}
+    public UsuarioBl(UsuarioRepository usuarioRepository, ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl, CursoEstudianteBl cursoEstudianteBl) { this.usuarioRepository = usuarioRepository;
+    this.profesorBl = profesorBl; this.estudianteBl = estudianteBl; this.cursoBl = cursoBl; this.cursoEstudianteBl = cursoEstudianteBl;}
 
     public Usuario findUsuarioByChatId(String chatId){
         Usuario usuario = this.usuarioRepository.findUsuarioByChatId(chatId);
@@ -102,15 +101,69 @@ public class UsuarioBl {
                             .setText(answer);
                     break;
                 case "crear":
-
                     answer = "Ingrese el nombre del curso a crear: ";
                     chatResponse = new EditMessageText()
                             .setChatId(lastMessage.getChatId())
                             .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
                             .setText(answer);
                     break;
+                case "estudiante":
+                    List<String> messagesEstudiante = estudianteBl.processUpdate(update.getCallbackQuery().getFrom());
+                    answer = "Gracias por registrarte "+update.getCallbackQuery().getFrom().getFirstName()+" "+update.getCallbackQuery().getFrom().getLastName()+" como estudiante.";
+                    answer += " Su ID: "+lastMessage.getChatId();
+                    chatResponse = new EditMessageText()
+                            .setChatId(lastMessage.getChatId())
+                            .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                            .setText(answer);
+                    break;
+                case "inscripcion":
+                    answer = "Ingrese el codigo de curso al que desea inscribirse: ";
+                    chatResponse = new EditMessageText()
+                            .setChatId(lastMessage.getChatId())
+                            .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                            .setText(answer);
+                    break;
+                case "verCursosProf":
+                    List<Curso> listCursosProf = cursoBl.cursosbyIdProf(update.getCallbackQuery().getFrom());
+                    chatResponse = new EditMessageText()
+                            .setChatId(update.getCallbackQuery().getMessage().getChatId())
+                            .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                            .setText("Estos son sus cursos disponibles:");
 
+                    InlineKeyboardMarkup markupInlineCurso = new InlineKeyboardMarkup();
+                    List<List<InlineKeyboardButton>> rowsInlineCurso = new ArrayList<>();
+                    List<InlineKeyboardButton> rowInlineCurso = new ArrayList<>();
+                    for (Curso curso:listCursosProf) {
+                        rowInlineCurso.add(new InlineKeyboardButton().setText(curso.getNombreCurso()).setCallbackData("cursosProf"));
+                    }
 
+                    rowsInlineCurso.add(rowInlineCurso);
+
+                    markupInlineCurso.setKeyboard(rowsInlineCurso);
+                    chatResponse.setReplyMarkup(markupInlineCurso);
+
+                    break;
+                case "verCursosEst":
+                    List<CursoHasEstudiante> listCursosEst = cursoEstudianteBl.cursosPorEstudiante(update.getCallbackQuery().getFrom());
+                    List<Curso> listFinal = cursoBl.cursosbyEst(listCursosEst);
+                    chatResponse = new EditMessageText()
+                            .setChatId(update.getCallbackQuery().getMessage().getChatId())
+                            .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                            .setText("Estos son sus cursos disponibles:");
+
+                    InlineKeyboardMarkup markupInlineCursoEst = new InlineKeyboardMarkup();
+                    List<List<InlineKeyboardButton>> rowsInlineCursoEst = new ArrayList<>();
+                    List<InlineKeyboardButton> rowInlineCursoEst = new ArrayList<>();
+                    for (Curso curso:listFinal) {
+                        rowInlineCursoEst.add(new InlineKeyboardButton().setText(curso.getNombreCurso()).setCallbackData(curso.getCodigoCurso()));
+                    }
+
+                    rowsInlineCursoEst.add(rowInlineCursoEst);
+
+                    markupInlineCursoEst.setKeyboard(rowsInlineCursoEst);
+                    chatResponse.setReplyMarkup(markupInlineCursoEst);
+
+                    break;
             }
         }
         LOGGER.info("PROCESSING IN MESSAGE: {} from user {}" ,update.getCallbackQuery().getData(), usuario.getIdUser());
@@ -202,6 +255,31 @@ public class UsuarioBl {
                     chatResponse = new SendMessage()
                             .setChatId(lastMessage.getChatId())
                             .setText(answerCrearCurso);
+                    break;
+                case "Ingrese el codigo de curso al que desea inscribirse: ":
+                    String codigoCurso = lastSent;
+                    System.out.println(codigoCurso);
+                    String answerIncribirCurso = "";
+                    System.out.println(update.getMessage().getFrom());
+
+                    if (cursoEstudianteBl.verificarEstudiante(update.getMessage().getFrom(),codigoCurso)){
+                        answerIncribirCurso = "Ya perteneces a este grupo, porfavor ingresa un codigo valido.";
+                    }else{
+                        try{
+                            String nomCur = cursoEstudianteBl.incribirCurso(update.getMessage().getFrom(), codigoCurso);
+                            if (nomCur == ""){
+                                answerIncribirCurso = "Curso no existente";
+                            }else{
+                                answerIncribirCurso = "Te uniste al curso -> "+nomCur;
+                            }
+
+                        }catch (DataIntegrityViolationException e){
+                            answerIncribirCurso = "Curso no existente";
+                        }
+                    }
+                    chatResponse = new SendMessage()
+                            .setChatId(lastMessage.getChatId())
+                            .setText(answerIncribirCurso);
                     break;
             }
         }
