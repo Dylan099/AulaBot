@@ -34,13 +34,14 @@ public class UsuarioBl {
     ExamenBl examenBl;
     PreguntaBl preguntaBl;
     RespuestaBl respuestaBl;
+    AnuncioBl anuncioBl;
     private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioBl.class);
 
     @Autowired
     public UsuarioBl(UsuarioRepository usuarioRepository, ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl, CursoEstudianteBl cursoEstudianteBl, ExamenBl examenBl,
-                     PreguntaBl preguntaBl, RespuestaBl respuestaBl) { this.usuarioRepository = usuarioRepository;
+                     PreguntaBl preguntaBl, RespuestaBl respuestaBl, AnuncioBl anuncioBl) { this.usuarioRepository = usuarioRepository;
     this.profesorBl = profesorBl; this.estudianteBl = estudianteBl; this.cursoBl = cursoBl; this.cursoEstudianteBl = cursoEstudianteBl;
-    this.examenBl=examenBl;this.preguntaBl=preguntaBl;this.respuestaBl=respuestaBl;}
+    this.examenBl=examenBl;this.preguntaBl=preguntaBl;this.respuestaBl=respuestaBl;this.anuncioBl=anuncioBl;}
 
     public Usuario findUsuarioByChatId(String chatId){
         Usuario usuario = this.usuarioRepository.findUsuarioByChatId(chatId);
@@ -193,6 +194,7 @@ public class UsuarioBl {
                             .setChatId(lastMessage.getChatId())
                             .setText("El tamano del archivo es:"+update.getMessage().getDocument().getFileSize());
                     break;
+
             }
             if(lastMessage.getLastMessageReceived().contains(">")){
                 String [] opcion = lastMessage.getLastMessageReceived().split(">");
@@ -257,6 +259,13 @@ public class UsuarioBl {
                                     .setChatId(lastMessage.getChatId())
                                     .setText(selectPregFinal.getIdPregunta()+">¿Cual es la pregunta correcta?");
                         }
+                        break;
+                    case "Ingrese el contenido del anuncio: ":
+                        Curso curso = cursoBl.findCursoByCursoId(Integer.parseInt(opcion[0]));
+                        Anuncio anuncio = anuncioBl.crearAnuncio(curso, update.getMessage().getText());
+                        chatResponse = new SendMessage()
+                                .setChatId(lastMessage.getChatId())
+                                .setText("Anuncio Creado");
                         break;
                 }
 
@@ -351,6 +360,13 @@ public class UsuarioBl {
                                 .setChatId(lastMessage.getChatId())
                                 .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
                                 .setText(selectExamen.getIdCurso()+">Ingrese nombre del examen:");
+                        break;
+                    case "crear anuncio":
+                        Curso anunciocurso=cursoBl.findCursoByCursoId(Integer.parseInt(cursos[1]));
+                        chatResponse = new EditMessageText()
+                                .setChatId(lastMessage.getChatId())
+                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                                .setText(anunciocurso.getIdCurso()+">Ingrese el contenido del anuncio: ");
                         break;
                 }
             }
