@@ -42,6 +42,14 @@ public class CursoBl {
             throw new RuntimeException("Imposible encontrar el curso con el ID "+pk);
         }
     }
+    public Curso findCursoByCursoId(Integer pk){
+        Curso byIdCurso = this.cursoRepository.findCursoByIdCurso(pk);
+        if(byIdCurso!=null)
+            return byIdCurso;
+        else
+            System.out.println("Cursos Vacios");
+        return null;
+    }
 
     public List<CursoDto> findAllCurso(){
         List<CursoDto> cursoDtos = new ArrayList<>();

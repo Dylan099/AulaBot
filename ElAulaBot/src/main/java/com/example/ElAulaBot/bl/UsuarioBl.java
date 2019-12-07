@@ -91,6 +91,20 @@ public class UsuarioBl {
             chatResponse.setChatId(lastMessage.getChatId()).setText("1");
         } else {
             String lastSent = update.getCallbackQuery().getData();
+            if(lastSent.contains(";")){
+                String cursos []=lastSent.split(";");
+                System.out.println("ALGOOOOOOOOOOOO____>___>"+cursos[0]+" "+cursos[1]);
+                switch (cursos[0]){
+                    case "cursosProf":
+                        Curso select=cursoBl.findCursoByCursoId(Integer.parseInt(cursos[1]));
+                        System.out.println("Curso ELEGIDO ____>"+select.getNombreCurso()+" "+select.getCodigoCurso());
+                        chatResponse = new EditMessageText()
+                                .setChatId(lastMessage.getChatId())
+                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                                .setText("Curso ELEGIDO ____>"+select.getNombreCurso()+" "+select.getCodigoCurso());
+                        break;
+                }
+            }
             switch (lastSent){
                 case "profesor":
                     List<String> messages = profesorBl.processUpdate(update.getCallbackQuery().getFrom());
@@ -136,7 +150,7 @@ public class UsuarioBl {
                     List<List<InlineKeyboardButton>> rowsInlineCurso = new ArrayList<>();
                     List<InlineKeyboardButton> rowInlineCurso = new ArrayList<>();
                     for (Curso curso:listCursosProf) {
-                        rowInlineCurso.add(new InlineKeyboardButton().setText(curso.getNombreCurso()).setCallbackData(numeroCurso+"cursosProf"));
+                        rowInlineCurso.add(new InlineKeyboardButton().setText("ID->"+curso.getIdCurso()+" "+curso.getNombreCurso()).setCallbackData("cursosProf;"+curso.getIdCurso()));
                         numeroCurso++;
                     }
 
@@ -239,10 +253,7 @@ public class UsuarioBl {
                             .setChatId(update.getCallbackQuery().getMessage().getChatId())
                             .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
                             .setText("Envie archivos solamente en formato PDF, Word, Excel");
-
-
-
-
+                    break;
             }
         }
         LOGGER.info("PROCESSING IN MESSAGE: {} from user {}" ,update.getCallbackQuery().getData(), usuario.getIdUser());
