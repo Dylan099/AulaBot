@@ -73,6 +73,7 @@ public class CursoBl {
         List<Curso> resultado = this.cursoRepository.findAllByIdProfesorAndStatus(profesor,1);
         return resultado;
     }
+
     public List<Curso> cursosbyEst(List<CursoHasEstudiante> cursoHasEstudiantes){
         List<Curso> resultado = new ArrayList<>();
         for (CursoHasEstudiante chs:cursoHasEstudiantes) {

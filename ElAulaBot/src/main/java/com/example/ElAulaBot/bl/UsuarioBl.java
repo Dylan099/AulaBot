@@ -31,7 +31,7 @@ public class UsuarioBl {
     EstudianteBl estudianteBl;
     CursoEstudianteBl cursoEstudianteBl;
     CursoBl cursoBl;
-
+    String nombreCurso="";
     private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioBl.class);
 
     @Autowired
@@ -126,6 +126,7 @@ public class UsuarioBl {
                     break;
                 case "verCursosProf":
                     List<Curso> listCursosProf = cursoBl.cursosbyIdProf(update.getCallbackQuery().getFrom());
+                    int numeroCurso = 0;
                     chatResponse = new EditMessageText()
                             .setChatId(update.getCallbackQuery().getMessage().getChatId())
                             .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
@@ -135,15 +136,15 @@ public class UsuarioBl {
                     List<List<InlineKeyboardButton>> rowsInlineCurso = new ArrayList<>();
                     List<InlineKeyboardButton> rowInlineCurso = new ArrayList<>();
                     for (Curso curso:listCursosProf) {
-                        rowInlineCurso.add(new InlineKeyboardButton().setText(curso.getNombreCurso()).setCallbackData("cursosProf"));
-
+                        rowInlineCurso.add(new InlineKeyboardButton().setText(curso.getNombreCurso()).setCallbackData(numeroCurso+"cursosProf"));
+                        numeroCurso++;
                     }
 
                     rowsInlineCurso.add(rowInlineCurso);
 
                     markupInlineCurso.setKeyboard(rowsInlineCurso);
                     chatResponse.setReplyMarkup(markupInlineCurso);
-
+                    numeroCurso = 0;
                     break;
                 case "verCursosEst":
                     List<CursoHasEstudiante> listCursosEst = cursoEstudianteBl.cursosPorEstudiante(update.getCallbackQuery().getFrom());
@@ -165,11 +166,14 @@ public class UsuarioBl {
                     markupInlineCursoEst.setKeyboard(rowsInlineCursoEst);
                     chatResponse.setReplyMarkup(markupInlineCursoEst);
                     break;
-                case "cursosProf":
+                case "0cursosProf":
+
+                    listCursosProf = cursoBl.cursosbyIdProf(update.getCallbackQuery().getFrom());
+                    nombreCurso = listCursosProf.get(0).getNombreCurso();
                     chatResponse = new EditMessageText()
                             .setChatId(update.getCallbackQuery().getMessage().getChatId())
                             .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                            .setText("Bienvenido:");
+                            .setText("Bienvenido al curso:"+nombreCurso);
 
                     InlineKeyboardMarkup markupInlineOpcionesCursoProf = new InlineKeyboardMarkup();
                     List<List<InlineKeyboardButton>> rowsInlineOpcionesCursoProf = new ArrayList<>();
@@ -186,6 +190,30 @@ public class UsuarioBl {
                     markupInlineOpcionesCursoProf.setKeyboard(rowsInlineOpcionesCursoProf);
                     chatResponse.setReplyMarkup(markupInlineOpcionesCursoProf);
 
+                    break;
+                case "1cursosProf":
+
+                    listCursosProf = cursoBl.cursosbyIdProf(update.getCallbackQuery().getFrom());
+                    nombreCurso = listCursosProf.get(1).getNombreCurso();
+                    chatResponse = new EditMessageText()
+                            .setChatId(update.getCallbackQuery().getMessage().getChatId())
+                            .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                            .setText("Bienvenido al curso:"+nombreCurso);
+
+                    markupInlineOpcionesCursoProf = new InlineKeyboardMarkup();
+                    rowsInlineOpcionesCursoProf = new ArrayList<>();
+
+                    rowInlineOpcionesCursoProf = new ArrayList<>();
+
+                    rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Subir archivo").setCallbackData("subir archivo"));
+                    rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Crear anuncio").setCallbackData("crear anuncio"));
+                    rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Crear examen").setCallbackData("crear examen"));
+                    rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Listado de estudiantes").setCallbackData("listado"));
+
+                    rowsInlineOpcionesCursoProf.add(rowInlineOpcionesCursoProf);
+
+                    markupInlineOpcionesCursoProf.setKeyboard(rowsInlineOpcionesCursoProf);
+                    chatResponse.setReplyMarkup(markupInlineOpcionesCursoProf);
                     break;
                 case "cursosEstu":
                     chatResponse = new EditMessageText()
@@ -205,6 +233,15 @@ public class UsuarioBl {
 
                     markupInlineOpcionesCursoEstu.setKeyboard(rowsInlineOpcionesCursoEstu);
                     chatResponse.setReplyMarkup(markupInlineOpcionesCursoEstu);
+                    break;
+                case "subir archivo":
+                    chatResponse = new EditMessageText()
+                            .setChatId(update.getCallbackQuery().getMessage().getChatId())
+                            .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                            .setText("Envie archivos solamente en formato PDF, Word, Excel");
+
+
+
 
             }
         }
@@ -323,6 +360,13 @@ public class UsuarioBl {
                             .setChatId(lastMessage.getChatId())
                             .setText(answerIncribirCurso);
                     break;
+                case "Envie archivos solamente en formato PDF, Word, Excel":
+                    //NOSE PORQUE NO MUESTRA el tamanoooo
+                    LOGGER.info("CASCOOOOOOOOOOOOOOOOOOOOO");
+                    chatResponse = new SendMessage()
+                            .setChatId(lastMessage.getChatId())
+                            .setText("El tamano del archivo es:"+update.getMessage().getDocument().getFileSize());
+
             }
         }
         LOGGER.info("PROCESSING IN MESSAGE: {} from user {}" ,update.getMessage().getText(), lastMessage.getIdUser());
