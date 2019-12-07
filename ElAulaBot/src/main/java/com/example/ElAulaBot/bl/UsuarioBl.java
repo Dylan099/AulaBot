@@ -35,13 +35,15 @@ public class UsuarioBl {
     PreguntaBl preguntaBl;
     RespuestaBl respuestaBl;
     AnuncioBl anuncioBl;
+    ArchivoBl archivoBl;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioBl.class);
 
     @Autowired
     public UsuarioBl(UsuarioRepository usuarioRepository, ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl, CursoEstudianteBl cursoEstudianteBl, ExamenBl examenBl,
-                     PreguntaBl preguntaBl, RespuestaBl respuestaBl, AnuncioBl anuncioBl) { this.usuarioRepository = usuarioRepository;
-    this.profesorBl = profesorBl; this.estudianteBl = estudianteBl; this.cursoBl = cursoBl; this.cursoEstudianteBl = cursoEstudianteBl;
-    this.examenBl=examenBl;this.preguntaBl=preguntaBl;this.respuestaBl=respuestaBl;this.anuncioBl=anuncioBl;}
+                     PreguntaBl preguntaBl, RespuestaBl respuestaBl, AnuncioBl anuncioBl,ArchivoBl archivoBl) { this.usuarioRepository = usuarioRepository;
+        this.profesorBl = profesorBl; this.estudianteBl = estudianteBl; this.cursoBl = cursoBl; this.cursoEstudianteBl = cursoEstudianteBl;
+        this.examenBl=examenBl;this.preguntaBl=preguntaBl;this.respuestaBl=respuestaBl;this.anuncioBl=anuncioBl;this.archivoBl=archivoBl;}
 
     public Usuario findUsuarioByChatId(String chatId){
         Usuario usuario = this.usuarioRepository.findUsuarioByChatId(chatId);
@@ -68,6 +70,15 @@ public class UsuarioBl {
         LOGGER.info("Recibiendo update {} ", update);
         Usuario usuario = initUsuario(update);
         setlastMessageSent(update,update.getMessage().getText());
+        SendMessage algo = continueChatWithUser(update, usuario);
+        setlastMessageReceived(update,algo.getText());
+        return algo;
+    }
+
+    public SendMessage processDocument(Update update){
+        LOGGER.info("Recibiendo update {} ", update);
+        Usuario usuario = initUsuario(update);
+        setlastMessageSent(update,update.getMessage().getDocument().getFileName());
         SendMessage algo = continueChatWithUser(update, usuario);
         setlastMessageReceived(update,algo.getText());
         return algo;
@@ -187,13 +198,7 @@ public class UsuarioBl {
                             .setChatId(lastMessage.getChatId())
                             .setText(answerIncribirCurso);
                     break;
-                case "Envie archivos solamente en formato PDF, Word, Excel":
-                    //NOSE PORQUE NO MUESTRA el tamanoooo
-                    LOGGER.info("CASCOOOOOOOOOOOOOOOOOOOOO");
-                    chatResponse = new SendMessage()
-                            .setChatId(lastMessage.getChatId())
-                            .setText("El tamano del archivo es:"+update.getMessage().getDocument().getFileSize());
-                    break;
+
 
             }
             if(lastMessage.getLastMessageReceived().contains(">")){
@@ -266,6 +271,13 @@ public class UsuarioBl {
                         chatResponse = new SendMessage()
                                 .setChatId(lastMessage.getChatId())
                                 .setText("Anuncio Creado");
+                        break;
+                    case "Envie archivos solamente en formato PDF, Word, Excel":
+                        Curso cursoArchivo = cursoBl.findCursoByCursoId(Integer.parseInt(opcion[0]));
+                        Archivo archivo = archivoBl.crearArchivo(cursoArchivo, update);
+                        chatResponse = new SendMessage()
+                                .setChatId(lastMessage.getChatId())
+                                .setText("Archivo Guardado");
                         break;
 
                 }
@@ -350,10 +362,11 @@ public class UsuarioBl {
                         chatResponse.setReplyMarkup(markupInlineOpcionesCursoEstu);
                         break;
                     case "subir archivo":
+                        Curso archivoCurso = cursoBl.findCursoByCursoId(Integer.parseInt(cursos[1]));
                         chatResponse = new EditMessageText()
                                 .setChatId(update.getCallbackQuery().getMessage().getChatId())
                                 .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                                .setText("Envie archivos solamente en formato PDF, Word, Excel");
+                                .setText(archivoCurso.getIdCurso()+">Envie archivos solamente en formato PDF, Word, Excel");
                         break;
                     case "crear examen":
                         Curso selectExamen=cursoBl.findCursoByCursoId(Integer.parseInt(cursos[1]));

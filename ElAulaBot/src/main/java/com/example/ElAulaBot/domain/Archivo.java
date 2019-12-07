@@ -54,21 +54,22 @@ public class Archivo implements Serializable {
     private Integer idArchivo;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 255)
     @Column(name = "nombre_ar")
     private String nombreAr;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 255)
     @Column(name = "tipo_mime")
     private String tipoMime;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 255)
     @Column(name = "tamanio_ar")
-    private int tamanioAr;
+    private String tamanioAr;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 250)
     @Column(name = "url_ar")
     private String urlAr;
     @Basic(optional = false)
@@ -106,7 +107,7 @@ public class Archivo implements Serializable {
         this.idArchivo = idArchivo;
     }
 
-    public Archivo(Integer idArchivo, String nombreAr, String tipoMime, int tamanioAr, String urlAr, Date fechaPublicacionAr, String txuser, String txhost, Date txdate, int status) {
+    public Archivo(Integer idArchivo, String nombreAr, String tipoMime, String tamanioAr, String urlAr, Date fechaPublicacionAr, String txuser, String txhost, Date txdate, int status) {
         this.idArchivo = idArchivo;
         this.nombreAr = nombreAr;
         this.tipoMime = tipoMime;
@@ -143,11 +144,11 @@ public class Archivo implements Serializable {
         this.tipoMime = tipoMime;
     }
 
-    public int getTamanioAr() {
+    public String getTamanioAr() {
         return tamanioAr;
     }
 
-    public void setTamanioAr(int tamanioAr) {
+    public void setTamanioAr(String tamanioAr) {
         this.tamanioAr = tamanioAr;
     }
 

@@ -26,39 +26,40 @@ public class ElAulaBotApplication {
 	PreguntaBl preguntaBl;
 	RespuestaBl respuestaBl;
 	AnuncioBl anuncioBl;
+	ArchivoBl archivoBl;
 
-	@Autowired
-	public ElAulaBotApplication(ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl, UsuarioBl usuarioBl, CursoEstudianteBl cursoEstudianteBl,
-								ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl, AnuncioBl anuncioBl) {
-		this.profesorBl = profesorBl;
-		this.estudianteBl = estudianteBl;
-		this.cursoBl = cursoBl;
-		this.usuarioBl = usuarioBl;
-		this.cursoEstudianteBl = cursoEstudianteBl;
-		this.examenBl = examenBl;
-		this.preguntaBl = preguntaBl;
-		this.respuestaBl = respuestaBl;
-		this.anuncioBl = anuncioBl;
-	}
+    @Autowired
+    public ElAulaBotApplication(ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl, UsuarioBl usuarioBl, CursoEstudianteBl cursoEstudianteBl,
+                                ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl,ArchivoBl archivoBl) {
+        this.profesorBl = profesorBl;
+        this.estudianteBl = estudianteBl;
+        this.cursoBl = cursoBl;
+        this.usuarioBl = usuarioBl;
+        this.cursoEstudianteBl = cursoEstudianteBl;
+        this.examenBl = examenBl;
+        this.preguntaBl = preguntaBl;
+        this.respuestaBl = respuestaBl;
+        this.archivoBl = archivoBl;
+    }
 
-	public ElAulaBotApplication() {
-	}
+    public ElAulaBotApplication() {
+    }
 
-	@PostConstruct
-	public void init() {
+    @PostConstruct
+    public void init() {
 
-		// TODO Initialize Api Context
-		ApiContextInitializer.init();
+        // TODO Initialize Api Context
+        ApiContextInitializer.init();
 
-		// TODO Instantiate Telegram Bots API
-		TelegramBotsApi botsApi = new TelegramBotsApi();
+        // TODO Instantiate Telegram Bots API
+        TelegramBotsApi botsApi = new TelegramBotsApi();
 
-		// TODO Register our bot
-		try {
-			botsApi.registerBot(new ElAulaBot(profesorBl,estudianteBl,cursoBl,usuarioBl,cursoEstudianteBl,examenBl,preguntaBl, respuestaBl,anuncioBl));
-		} catch (TelegramApiException e) {
-			e.printStackTrace();
-		}
-	}
+        // TODO Register our bot
+        try {
+            botsApi.registerBot(new ElAulaBot(profesorBl,estudianteBl,cursoBl,usuarioBl,cursoEstudianteBl,examenBl,preguntaBl, respuestaBl,archivoBl));
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

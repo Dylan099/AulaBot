@@ -35,10 +35,10 @@ public class ElAulaBot extends TelegramLongPollingBot {
     PreguntaBl preguntaBl;
     RespuestaBl respuestaBl;
     AnuncioBl anuncioBl;
-
+    ArchivoBl archivoBl;
     @Autowired
     public ElAulaBot(ProfesorBl profesorBl, EstudianteBl estudianteBl, CursoBl cursoBl, UsuarioBl usuarioBl, CursoEstudianteBl cursoEstudianteBl,
-                     ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl, AnuncioBl anuncioBl) {
+                     ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl,ArchivoBl archivoBl) {
         this.profesorBl = profesorBl;
         this.estudianteBl = estudianteBl;
         this.cursoBl = cursoBl;
@@ -47,7 +47,7 @@ public class ElAulaBot extends TelegramLongPollingBot {
         this.examenBl=examenBl;
         this.preguntaBl = preguntaBl;
         this.respuestaBl = respuestaBl;
-        this.anuncioBl = anuncioBl;
+        this.archivoBl = archivoBl;
     }
 
     private long chatId;
@@ -70,6 +70,13 @@ public class ElAulaBot extends TelegramLongPollingBot {
             try {
                 execute(messageText);
             } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+        }else if(update.getMessage().hasDocument()){
+            SendMessage messageDocument = usuarioBl.processDocument(update);
+            try{
+                execute(messageDocument);
+            }catch (TelegramApiException e){
                 e.printStackTrace();
             }
         }
