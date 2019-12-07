@@ -1,6 +1,8 @@
 package com.example.ElAulaBot.app;
 
 import com.example.ElAulaBot.bl.*;
+import com.example.ElAulaBot.domain.Examen;
+import com.example.ElAulaBot.domain.Pregunta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,14 +21,21 @@ public class ElAulaBotApplication {
 	CursoBl cursoBl;
 	UsuarioBl usuarioBl;
 	CursoEstudianteBl cursoEstudianteBl;
+	ExamenBl examenBl;
+	PreguntaBl preguntaBl;
+	RespuestaBl respuestaBl;
 
 	@Autowired
-	public ElAulaBotApplication(ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl, UsuarioBl usuarioBl, CursoEstudianteBl cursoEstudianteBl) {
+	public ElAulaBotApplication(ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl, UsuarioBl usuarioBl, CursoEstudianteBl cursoEstudianteBl,
+								ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl) {
 		this.profesorBl = profesorBl;
 		this.estudianteBl = estudianteBl;
 		this.cursoBl = cursoBl;
 		this.usuarioBl = usuarioBl;
 		this.cursoEstudianteBl = cursoEstudianteBl;
+		this.examenBl = examenBl;
+		this.preguntaBl = preguntaBl;
+		this.respuestaBl = respuestaBl;
 	}
 
 	public ElAulaBotApplication() {
@@ -43,7 +52,7 @@ public class ElAulaBotApplication {
 
 		// TODO Register our bot
 		try {
-			botsApi.registerBot(new ElAulaBot(profesorBl,estudianteBl,cursoBl,usuarioBl,cursoEstudianteBl));
+			botsApi.registerBot(new ElAulaBot(profesorBl,estudianteBl,cursoBl,usuarioBl,cursoEstudianteBl,examenBl,preguntaBl, respuestaBl));
 		} catch (TelegramApiException e) {
 			e.printStackTrace();
 		}

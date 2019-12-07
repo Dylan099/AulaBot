@@ -31,11 +31,16 @@ public class UsuarioBl {
     EstudianteBl estudianteBl;
     CursoEstudianteBl cursoEstudianteBl;
     CursoBl cursoBl;
+    ExamenBl examenBl;
+    PreguntaBl preguntaBl;
+    RespuestaBl respuestaBl;
     private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioBl.class);
 
     @Autowired
-    public UsuarioBl(UsuarioRepository usuarioRepository, ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl, CursoEstudianteBl cursoEstudianteBl) { this.usuarioRepository = usuarioRepository;
-    this.profesorBl = profesorBl; this.estudianteBl = estudianteBl; this.cursoBl = cursoBl; this.cursoEstudianteBl = cursoEstudianteBl;}
+    public UsuarioBl(UsuarioRepository usuarioRepository, ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl, CursoEstudianteBl cursoEstudianteBl, ExamenBl examenBl,
+                     PreguntaBl preguntaBl, RespuestaBl respuestaBl) { this.usuarioRepository = usuarioRepository;
+    this.profesorBl = profesorBl; this.estudianteBl = estudianteBl; this.cursoBl = cursoBl; this.cursoEstudianteBl = cursoEstudianteBl;
+    this.examenBl=examenBl;this.preguntaBl=preguntaBl;this.respuestaBl=respuestaBl;}
 
     public Usuario findUsuarioByChatId(String chatId){
         Usuario usuario = this.usuarioRepository.findUsuarioByChatId(chatId);
@@ -65,6 +70,200 @@ public class UsuarioBl {
         SendMessage algo = continueChatWithUser(update, usuario);
         setlastMessageReceived(update,algo.getText());
         return algo;
+    }
+
+    private SendMessage continueChatWithUser(Update update,Usuario lastMessage) {
+        // Obtener el ultimo mensaje que envió el usuario
+        LOGGER.info("Primer mensaje del usuario botUserId{}", update.getMessage().getFrom().getId());
+        // Preparo la vaiable para retornar la respuesta
+        // Si el ultimo mensaje no existe (es la primera conversación)
+        SendMessage chatResponse=null;
+
+        if (lastMessage == null) {
+            // Retornamos 1
+            LOGGER.info("Primer mensaje del usuario botUserId{}", lastMessage.getIdUser());
+            chatResponse.setChatId(lastMessage.getChatId()).setText("1");
+        } else {
+            String lastSent = lastMessage.getLastMessageSent();
+            switch (lastSent){
+                case "/start":
+                    chatResponse = new SendMessage()
+                            .setChatId(lastMessage.getChatId())
+                            .setText("Bienvenido como desea registrarse : " + " ID -> "+update.getMessage().getFrom().getId());
+                    InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+                    List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+                    List<InlineKeyboardButton> rowInline = new ArrayList<>();
+                    rowInline.add(new InlineKeyboardButton().setText("Profesor").setCallbackData("profesor"));
+                    rowInline.add(new InlineKeyboardButton().setText("Estudiante").setCallbackData("estudiante"));
+
+                    rowsInline.add(rowInline);
+                    markupInline.setKeyboard(rowsInline);
+                    chatResponse.setReplyMarkup(markupInline);
+                    break;
+                case "/curso":
+
+                    // Verificacion de que el usuario es un profesor y no un estudiante
+                    if(profesorBl.findProfesorByChatId(update.getMessage().getFrom().getId())!=null){
+
+                        chatResponse = new SendMessage()
+                                .setChatId(lastMessage.getChatId())
+                                .setText("Que desea hacer:");
+
+                        InlineKeyboardMarkup markupInlineCurso = new InlineKeyboardMarkup();
+                        List<List<InlineKeyboardButton>> rowsInlineCurso = new ArrayList<>();
+                        List<InlineKeyboardButton> rowInlineCurso = new ArrayList<>();
+                        rowInlineCurso.add(new InlineKeyboardButton().setText("Crear Curso").setCallbackData("crear"));
+                        rowInlineCurso.add(new InlineKeyboardButton().setText("Ver Cursos").setCallbackData("verCursosProf"));
+
+                        rowsInlineCurso.add(rowInlineCurso);
+
+                        markupInlineCurso.setKeyboard(rowsInlineCurso);
+                        chatResponse.setReplyMarkup(markupInlineCurso);
+                    } else  if(estudianteBl.findEstudianteByChatId(update.getMessage().getFrom().getId())!=null){
+
+                        chatResponse = new SendMessage()
+                                .setChatId(lastMessage.getChatId())
+                                .setText("Que desea hacer:");
+
+                        InlineKeyboardMarkup markupInlineCurso = new InlineKeyboardMarkup();
+                        List<List<InlineKeyboardButton>> rowsInlineCurso = new ArrayList<>();
+                        List<InlineKeyboardButton> rowInlineCurso = new ArrayList<>();
+                        rowInlineCurso.add(new InlineKeyboardButton().setText("Inscribirse a un Curso").setCallbackData("inscripcion"));
+                        rowInlineCurso.add(new InlineKeyboardButton().setText("Ver Cursos").setCallbackData("verCursosEst"));
+
+                        rowsInlineCurso.add(rowInlineCurso);
+
+                        markupInlineCurso.setKeyboard(rowsInlineCurso);
+                        chatResponse.setReplyMarkup(markupInlineCurso);
+                    } else {
+                        chatResponse = new SendMessage()
+                                .setChatId(lastMessage.getChatId())
+                                .setText("Usted no esta inscrito, por favor inicie el comando /start.");
+                    }
+                    break;
+                case "/stop":
+                    chatResponse = new SendMessage()
+                            .setChatId(lastMessage.getChatId())
+                            .setText("Gracias por usar el bot");
+            }
+            switch (lastMessage.getLastMessageReceived()){
+                case "Ingrese el nombre del curso a crear: ":
+                    String nombreCurso = lastSent;
+                    System.out.println(nombreCurso);
+                    String answerCrearCurso = "";
+                    try{
+                        String codigo = cursoBl.crearCurso(update.getMessage().getFrom(),nombreCurso);
+                        answerCrearCurso = "Curso Creado. Codigo del curso -> "+ codigo;
+                    }catch (DataIntegrityViolationException e){
+                        answerCrearCurso = "Curso ya existente";
+                    }
+                    chatResponse = new SendMessage()
+                            .setChatId(lastMessage.getChatId())
+                            .setText(answerCrearCurso);
+                    break;
+                case "Ingrese el codigo de curso al que desea inscribirse: ":
+                    String codigoCurso = lastSent;
+                    System.out.println(codigoCurso);
+                    String answerIncribirCurso = "";
+                    System.out.println(update.getMessage().getFrom());
+
+                    if (cursoEstudianteBl.verificarEstudiante(update.getMessage().getFrom(),codigoCurso)){
+                        answerIncribirCurso = "Ya perteneces a este grupo, porfavor ingresa un codigo valido.";
+                    }else{
+                        try{
+                            String nomCur = cursoEstudianteBl.incribirCurso(update.getMessage().getFrom(), codigoCurso);
+                            if (nomCur == ""){
+                                answerIncribirCurso = "Curso no existente";
+                            }else{
+                                answerIncribirCurso = "Te uniste al curso -> "+nomCur;
+                            }
+
+                        }catch (DataIntegrityViolationException e){
+                            answerIncribirCurso = "Curso no existente";
+                        }
+                    }
+                    chatResponse = new SendMessage()
+                            .setChatId(lastMessage.getChatId())
+                            .setText(answerIncribirCurso);
+                    break;
+                case "Envie archivos solamente en formato PDF, Word, Excel":
+                    //NOSE PORQUE NO MUESTRA el tamanoooo
+                    LOGGER.info("CASCOOOOOOOOOOOOOOOOOOOOO");
+                    chatResponse = new SendMessage()
+                            .setChatId(lastMessage.getChatId())
+                            .setText("El tamano del archivo es:"+update.getMessage().getDocument().getFileSize());
+                    break;
+            }
+            if(lastMessage.getLastMessageReceived().contains(">")){
+                String [] opcion = lastMessage.getLastMessageReceived().split(">");
+                switch (opcion[1]){
+                    case "Ingrese nombre del examen:":
+                        Curso selectExamen=cursoBl.findCursoByCursoId(Integer.parseInt(opcion[0]));
+                        Examen nuevoExamen = examenBl.crearExamen(selectExamen,update.getMessage().getText());
+                        chatResponse = new SendMessage()
+                                .setChatId(lastMessage.getChatId())
+                                .setText(nuevoExamen.getIdExamen()+">Ingrese enunciado de la pregunta:(Ingrese Fin si desea terminar y guardar el examen)");
+                        break;
+                    case "Ingrese enunciado de la pregunta:(Ingrese Fin si desea terminar y guardar el examen)":
+                        Examen targetExamen = examenBl.findExamenByExamenId(Integer.parseInt(opcion[0]));
+                        if(update.getMessage().getText().compareToIgnoreCase("Fin")==0){
+                            chatResponse = new SendMessage()
+                                    .setChatId(lastMessage.getChatId())
+                                    .setText("Examen Registrado");
+                        }else{
+                            Pregunta targetPregunta = preguntaBl.crearPregunta(targetExamen,update.getMessage().getText());
+                            chatResponse = new SendMessage()
+                                    .setChatId(lastMessage.getChatId())
+                                    .setText(targetPregunta.getIdPregunta()+">Ingrese respuesta 1:");
+                        }
+                        break;
+                    case "Ingrese respuesta 1:":
+                        Pregunta selectPreg1 = preguntaBl.findPreguntaByIdPregunta(Integer.parseInt(opcion[0]));
+                        Respuesta respuesta=respuestaBl.crearRespuesta(selectPreg1,update.getMessage().getText());
+                        chatResponse = new SendMessage()
+                                .setChatId(lastMessage.getChatId())
+                                .setText(selectPreg1.getIdPregunta()+">Ingrese respuesta 2:");
+                        break;
+                    case "Ingrese respuesta 2:":
+                        Pregunta selectPreg2 = preguntaBl.findPreguntaByIdPregunta(Integer.parseInt(opcion[0]));
+                        Respuesta respuesta2=respuestaBl.crearRespuesta(selectPreg2,update.getMessage().getText());
+                        chatResponse = new SendMessage()
+                                .setChatId(lastMessage.getChatId())
+                                .setText(selectPreg2.getIdPregunta()+">Ingrese respuesta 3:");
+                        break;
+                    case "Ingrese respuesta 3:":
+                        Pregunta selectPreg3 = preguntaBl.findPreguntaByIdPregunta(Integer.parseInt(opcion[0]));
+                        Respuesta respuesta3=respuestaBl.crearRespuesta(selectPreg3,update.getMessage().getText());
+                        chatResponse = new SendMessage()
+                                .setChatId(lastMessage.getChatId())
+                                .setText(selectPreg3.getIdPregunta()+">Ingrese respuesta 4:");
+                        break;
+                    case "Ingrese respuesta 4:":
+                        Pregunta selectPreg4 = preguntaBl.findPreguntaByIdPregunta(Integer.parseInt(opcion[0]));
+                        Respuesta respuesta4=respuestaBl.crearRespuesta(selectPreg4,update.getMessage().getText());
+                        chatResponse = new SendMessage()
+                                .setChatId(lastMessage.getChatId())
+                                .setText(selectPreg4.getIdPregunta()+">¿Cual es la pregunta correcta?");
+                        break;
+                    case "¿Cual es la pregunta correcta?":
+                        Pregunta selectPregFinal = preguntaBl.findPreguntaByIdPregunta(Integer.parseInt(opcion[0]));
+                        if(update.getMessage().getText().matches("[1-4]+")){
+                            respuestaBl.setRespuestaCorrecta(update,respuestaBl.findAllByPreguntaId(selectPregFinal));
+                            chatResponse = new SendMessage()
+                                    .setChatId(lastMessage.getChatId())
+                                    .setText("Examen Creado exitosamente");
+                        }else{
+                            chatResponse = new SendMessage()
+                                    .setChatId(lastMessage.getChatId())
+                                    .setText(selectPregFinal.getIdPregunta()+">¿Cual es la pregunta correcta?");
+                        }
+                        break;
+                }
+
+            }
+        }
+        LOGGER.info("PROCESSING IN MESSAGE: {} from user {}" ,update.getMessage().getText(), lastMessage.getIdUser());
+        return chatResponse;
     }
 
     public EditMessageText processCallBack(Update update){
@@ -107,10 +306,10 @@ public class UsuarioBl {
                         List<InlineKeyboardButton> rowInlineOpcionesCursoProf = new ArrayList<>();
                         List<InlineKeyboardButton> rowInlineOpcionesCursoProf2 = new ArrayList<>();
 
-                        rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Subir archivo").setCallbackData("subir archivo"));
-                        rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Crear anuncio").setCallbackData("crear anuncio"));
-                        rowInlineOpcionesCursoProf2.add(new InlineKeyboardButton().setText("Crear examen").setCallbackData("crear examen"));
-                        rowInlineOpcionesCursoProf2.add(new InlineKeyboardButton().setText("Listado de estudiantes").setCallbackData("listado"));
+                        rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Subir archivo").setCallbackData("subir archivo;"+select.getIdCurso()));
+                        rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Crear anuncio").setCallbackData("crear anuncio;"+select.getIdCurso()));
+                        rowInlineOpcionesCursoProf2.add(new InlineKeyboardButton().setText("Crear examen").setCallbackData("crear examen;"+select.getIdCurso()));
+                        rowInlineOpcionesCursoProf2.add(new InlineKeyboardButton().setText("Listado de estudiantes").setCallbackData("listado;"+select.getIdCurso()));
 
                         rowsInlineOpcionesCursoProf.add(rowInlineOpcionesCursoProf);
                         rowsInlineOpcionesCursoProf.add(rowInlineOpcionesCursoProf2);
@@ -130,15 +329,28 @@ public class UsuarioBl {
                         List<InlineKeyboardButton> rowInlineOpcionesCursoEstu = new ArrayList<>();
                         List<InlineKeyboardButton> rowInlineOpcionesCursoEstu2 = new ArrayList<>();
 
-                        rowInlineOpcionesCursoEstu.add(new InlineKeyboardButton().setText("Ver archivos").setCallbackData("ver archivos"));
-                        rowInlineOpcionesCursoEstu.add(new InlineKeyboardButton().setText("Ver anuncios").setCallbackData("ver anuncios"));
-                        rowInlineOpcionesCursoEstu2.add(new InlineKeyboardButton().setText("Tomar examen").setCallbackData("tomar examen"));
+                        rowInlineOpcionesCursoEstu.add(new InlineKeyboardButton().setText("Ver archivos").setCallbackData("ver archivos;"+selectEst.getIdCurso()));
+                        rowInlineOpcionesCursoEstu.add(new InlineKeyboardButton().setText("Ver anuncios").setCallbackData("ver anuncios;"+selectEst.getIdCurso()));
+                        rowInlineOpcionesCursoEstu2.add(new InlineKeyboardButton().setText("Tomar examen").setCallbackData("tomar examen;"+selectEst.getIdCurso()));
 
                         rowsInlineOpcionesCursoEstu.add(rowInlineOpcionesCursoEstu);
                         rowsInlineOpcionesCursoEstu.add(rowInlineOpcionesCursoEstu2);
 
                         markupInlineOpcionesCursoEstu.setKeyboard(rowsInlineOpcionesCursoEstu);
                         chatResponse.setReplyMarkup(markupInlineOpcionesCursoEstu);
+                        break;
+                    case "subir archivo":
+                        chatResponse = new EditMessageText()
+                                .setChatId(update.getCallbackQuery().getMessage().getChatId())
+                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                                .setText("Envie archivos solamente en formato PDF, Word, Excel");
+                        break;
+                    case "crear examen":
+                        Curso selectExamen=cursoBl.findCursoByCursoId(Integer.parseInt(cursos[1]));
+                        chatResponse = new EditMessageText()
+                                .setChatId(lastMessage.getChatId())
+                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                                .setText(selectExamen.getIdCurso()+">Ingrese nombre del examen:");
                         break;
                 }
             }
@@ -214,139 +426,9 @@ public class UsuarioBl {
                     markupInlineCursoEst.setKeyboard(rowsInlineCursoEst);
                     chatResponse.setReplyMarkup(markupInlineCursoEst);
                     break;
-                case "subir archivo":
-                    chatResponse = new EditMessageText()
-                            .setChatId(update.getCallbackQuery().getMessage().getChatId())
-                            .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                            .setText("Envie archivos solamente en formato PDF, Word, Excel");
-                    break;
             }
         }
         LOGGER.info("PROCESSING IN MESSAGE: {} from user {}" ,update.getCallbackQuery().getData(), usuario.getIdUser());
-        return chatResponse;
-    }
-
-    private SendMessage continueChatWithUser(Update update,Usuario lastMessage) {
-        // Obtener el ultimo mensaje que envió el usuario
-        LOGGER.info("Primer mensaje del usuario botUserId{}", update.getMessage().getFrom().getId());
-        // Preparo la vaiable para retornar la respuesta
-        // Si el ultimo mensaje no existe (es la primera conversación)
-        SendMessage chatResponse=null;
-
-        if (lastMessage == null) {
-            // Retornamos 1
-            LOGGER.info("Primer mensaje del usuario botUserId{}", lastMessage.getIdUser());
-            chatResponse.setChatId(lastMessage.getChatId()).setText("1");
-        } else {
-            String lastSent = lastMessage.getLastMessageSent();
-            switch (lastSent){
-                case "/start":
-                    chatResponse = new SendMessage()
-                            .setChatId(lastMessage.getChatId())
-                            .setText("Bienvenido como desea registrarse : " + " ID -> "+update.getMessage().getFrom().getId());
-                    InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
-                    List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-                    List<InlineKeyboardButton> rowInline = new ArrayList<>();
-                    rowInline.add(new InlineKeyboardButton().setText("Profesor").setCallbackData("profesor"));
-                    rowInline.add(new InlineKeyboardButton().setText("Estudiante").setCallbackData("estudiante"));
-
-                    rowsInline.add(rowInline);
-                    markupInline.setKeyboard(rowsInline);
-                    chatResponse.setReplyMarkup(markupInline);
-                    break;
-                case "/curso":
-
-                    // Verificacion de que el usuario es un profesor y no un estudiante
-                    if(profesorBl.findProfesorByChatId(update.getMessage().getFrom().getId())!=null){
-
-                        chatResponse = new SendMessage()
-                                .setChatId(lastMessage.getChatId())
-                                .setText("Que desea hacer:");
-
-                        InlineKeyboardMarkup markupInlineCurso = new InlineKeyboardMarkup();
-                        List<List<InlineKeyboardButton>> rowsInlineCurso = new ArrayList<>();
-                        List<InlineKeyboardButton> rowInlineCurso = new ArrayList<>();
-                        rowInlineCurso.add(new InlineKeyboardButton().setText("Crear Curso").setCallbackData("crear"));
-                        rowInlineCurso.add(new InlineKeyboardButton().setText("Ver Cursos").setCallbackData("verCursosProf"));
-
-                        rowsInlineCurso.add(rowInlineCurso);
-
-                        markupInlineCurso.setKeyboard(rowsInlineCurso);
-                        chatResponse.setReplyMarkup(markupInlineCurso);
-                    } else  if(estudianteBl.findEstudianteByChatId(update.getMessage().getFrom().getId())!=null){
-
-                        chatResponse = new SendMessage()
-                                .setChatId(lastMessage.getChatId())
-                                .setText("Que desea hacer:");
-
-                        InlineKeyboardMarkup markupInlineCurso = new InlineKeyboardMarkup();
-                        List<List<InlineKeyboardButton>> rowsInlineCurso = new ArrayList<>();
-                        List<InlineKeyboardButton> rowInlineCurso = new ArrayList<>();
-                        rowInlineCurso.add(new InlineKeyboardButton().setText("Inscribirse a un Curso").setCallbackData("inscripcion"));
-                        rowInlineCurso.add(new InlineKeyboardButton().setText("Ver Cursos").setCallbackData("verCursosEst"));
-
-                        rowsInlineCurso.add(rowInlineCurso);
-
-                        markupInlineCurso.setKeyboard(rowsInlineCurso);
-                        chatResponse.setReplyMarkup(markupInlineCurso);
-                    } else {
-                        chatResponse = new SendMessage()
-                                .setChatId(lastMessage.getChatId())
-                                .setText("Usted no esta inscrito, por favor inicie el comando /start.");
-                    }
-                    break;
-
-            }
-            switch (lastMessage.getLastMessageReceived()){
-                case "Ingrese el nombre del curso a crear: ":
-                    String nombreCurso = lastSent;
-                    System.out.println(nombreCurso);
-                    String answerCrearCurso = "";
-                    try{
-                        String codigo = cursoBl.crearCurso(update.getMessage().getFrom(),nombreCurso);
-                        answerCrearCurso = "Curso Creado. Codigo del curso -> "+ codigo;
-                    }catch (DataIntegrityViolationException e){
-                        answerCrearCurso = "Curso ya existente";
-                    }
-                    chatResponse = new SendMessage()
-                            .setChatId(lastMessage.getChatId())
-                            .setText(answerCrearCurso);
-                    break;
-                case "Ingrese el codigo de curso al que desea inscribirse: ":
-                    String codigoCurso = lastSent;
-                    System.out.println(codigoCurso);
-                    String answerIncribirCurso = "";
-                    System.out.println(update.getMessage().getFrom());
-
-                    if (cursoEstudianteBl.verificarEstudiante(update.getMessage().getFrom(),codigoCurso)){
-                        answerIncribirCurso = "Ya perteneces a este grupo, porfavor ingresa un codigo valido.";
-                    }else{
-                        try{
-                            String nomCur = cursoEstudianteBl.incribirCurso(update.getMessage().getFrom(), codigoCurso);
-                            if (nomCur == ""){
-                                answerIncribirCurso = "Curso no existente";
-                            }else{
-                                answerIncribirCurso = "Te uniste al curso -> "+nomCur;
-                            }
-
-                        }catch (DataIntegrityViolationException e){
-                            answerIncribirCurso = "Curso no existente";
-                        }
-                    }
-                    chatResponse = new SendMessage()
-                            .setChatId(lastMessage.getChatId())
-                            .setText(answerIncribirCurso);
-                    break;
-                case "Envie archivos solamente en formato PDF, Word, Excel":
-                    //NOSE PORQUE NO MUESTRA el tamanoooo
-                    LOGGER.info("CASCOOOOOOOOOOOOOOOOOOOOO");
-                    chatResponse = new SendMessage()
-                            .setChatId(lastMessage.getChatId())
-                            .setText("El tamano del archivo es:"+update.getMessage().getDocument().getFileSize());
-
-            }
-        }
-        LOGGER.info("PROCESSING IN MESSAGE: {} from user {}" ,update.getMessage().getText(), lastMessage.getIdUser());
         return chatResponse;
     }
 
