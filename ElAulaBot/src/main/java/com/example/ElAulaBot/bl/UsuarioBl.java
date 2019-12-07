@@ -267,6 +267,7 @@ public class UsuarioBl {
                                 .setChatId(lastMessage.getChatId())
                                 .setText("Anuncio Creado");
                         break;
+
                 }
 
             }
@@ -367,6 +368,19 @@ public class UsuarioBl {
                                 .setChatId(lastMessage.getChatId())
                                 .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
                                 .setText(anunciocurso.getIdCurso()+">Ingrese el contenido del anuncio: ");
+                        break;
+                    case "ver anuncios":
+                        Curso veranuncio=cursoBl.findCursoByCursoId(Integer.parseInt(cursos[1]));
+                        List<Anuncio> listAnuncios = anuncioBl.findAllByCursoId(veranuncio);
+                        String mensajepro = "";
+                        for (Anuncio anuncio2: listAnuncios) {
+                            mensajepro += anuncio2.getContenidoAn()+" "+anuncio2.getFechaPublicacionAn().toString() +"\n";
+                        }
+                        chatResponse = new EditMessageText()
+                                .setChatId(lastMessage.getChatId())
+                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                                .setText("Estos son los anuncios del curso: \n"+mensajepro);
+
                         break;
                 }
             }

@@ -34,10 +34,11 @@ public class ElAulaBot extends TelegramLongPollingBot {
     ExamenBl examenBl;
     PreguntaBl preguntaBl;
     RespuestaBl respuestaBl;
+    AnuncioBl anuncioBl;
 
     @Autowired
     public ElAulaBot(ProfesorBl profesorBl, EstudianteBl estudianteBl, CursoBl cursoBl, UsuarioBl usuarioBl, CursoEstudianteBl cursoEstudianteBl,
-                     ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl) {
+                     ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl, AnuncioBl anuncioBl) {
         this.profesorBl = profesorBl;
         this.estudianteBl = estudianteBl;
         this.cursoBl = cursoBl;
@@ -46,6 +47,7 @@ public class ElAulaBot extends TelegramLongPollingBot {
         this.examenBl=examenBl;
         this.preguntaBl = preguntaBl;
         this.respuestaBl = respuestaBl;
+        this.anuncioBl = anuncioBl;
     }
 
     private long chatId;

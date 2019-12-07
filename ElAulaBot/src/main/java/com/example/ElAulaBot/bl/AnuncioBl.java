@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
@@ -22,6 +23,15 @@ public class AnuncioBl {
     @Autowired
     public AnuncioBl(AnuncioRepository anuncioRepository){
         this.anuncioRepository = anuncioRepository;
+    }
+
+    public List<Anuncio> findAllByCursoId(Curso curso){
+        List<Anuncio> anuncios = anuncioRepository.findAllByIdCurso(curso);
+        if(!anuncios.isEmpty()){
+            return anuncios;
+        }else
+            LOGGER.info("Sin anuncios");
+        return null;
     }
 
     public Anuncio crearAnuncio(Curso curso, String mensaje){
