@@ -31,7 +31,6 @@ public class UsuarioBl {
     EstudianteBl estudianteBl;
     CursoEstudianteBl cursoEstudianteBl;
     CursoBl cursoBl;
-    String nombreCurso="";
     private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioBl.class);
 
     @Autowired
@@ -92,16 +91,54 @@ public class UsuarioBl {
         } else {
             String lastSent = update.getCallbackQuery().getData();
             if(lastSent.contains(";")){
-                String cursos []=lastSent.split(";");
+                String []cursos=lastSent.split(";");
                 System.out.println("ALGOOOOOOOOOOOO____>___>"+cursos[0]+" "+cursos[1]);
                 switch (cursos[0]){
                     case "cursosProf":
                         Curso select=cursoBl.findCursoByCursoId(Integer.parseInt(cursos[1]));
-                        System.out.println("Curso ELEGIDO ____>"+select.getNombreCurso()+" "+select.getCodigoCurso());
                         chatResponse = new EditMessageText()
-                                .setChatId(lastMessage.getChatId())
+                                .setChatId(update.getCallbackQuery().getMessage().getChatId())
                                 .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                                .setText("Curso ELEGIDO ____>"+select.getNombreCurso()+" "+select.getCodigoCurso());
+                                .setText("Bienvenido al curso: "+select.getNombreCurso());
+
+                        InlineKeyboardMarkup markupInlineOpcionesCursoProf = new InlineKeyboardMarkup();
+                        List<List<InlineKeyboardButton>> rowsInlineOpcionesCursoProf = new ArrayList<>();
+
+                        List<InlineKeyboardButton> rowInlineOpcionesCursoProf = new ArrayList<>();
+                        List<InlineKeyboardButton> rowInlineOpcionesCursoProf2 = new ArrayList<>();
+
+                        rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Subir archivo").setCallbackData("subir archivo"));
+                        rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Crear anuncio").setCallbackData("crear anuncio"));
+                        rowInlineOpcionesCursoProf2.add(new InlineKeyboardButton().setText("Crear examen").setCallbackData("crear examen"));
+                        rowInlineOpcionesCursoProf2.add(new InlineKeyboardButton().setText("Listado de estudiantes").setCallbackData("listado"));
+
+                        rowsInlineOpcionesCursoProf.add(rowInlineOpcionesCursoProf);
+                        rowsInlineOpcionesCursoProf.add(rowInlineOpcionesCursoProf2);
+
+                        markupInlineOpcionesCursoProf.setKeyboard(rowsInlineOpcionesCursoProf);
+                        chatResponse.setReplyMarkup(markupInlineOpcionesCursoProf);
+                        break;
+                    case "cursosEst":
+                        Curso selectEst=cursoBl.findCursoByCursoId(Integer.parseInt(cursos[1]));
+                        chatResponse = new EditMessageText()
+                                .setChatId(update.getCallbackQuery().getMessage().getChatId())
+                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                                .setText("Bienvenido al curso:"+selectEst.getNombreCurso());
+
+                        InlineKeyboardMarkup markupInlineOpcionesCursoEstu = new InlineKeyboardMarkup();
+                        List<List<InlineKeyboardButton>> rowsInlineOpcionesCursoEstu = new ArrayList<>();
+                        List<InlineKeyboardButton> rowInlineOpcionesCursoEstu = new ArrayList<>();
+                        List<InlineKeyboardButton> rowInlineOpcionesCursoEstu2 = new ArrayList<>();
+
+                        rowInlineOpcionesCursoEstu.add(new InlineKeyboardButton().setText("Ver archivos").setCallbackData("ver archivos"));
+                        rowInlineOpcionesCursoEstu.add(new InlineKeyboardButton().setText("Ver anuncios").setCallbackData("ver anuncios"));
+                        rowInlineOpcionesCursoEstu2.add(new InlineKeyboardButton().setText("Tomar examen").setCallbackData("tomar examen"));
+
+                        rowsInlineOpcionesCursoEstu.add(rowInlineOpcionesCursoEstu);
+                        rowsInlineOpcionesCursoEstu.add(rowInlineOpcionesCursoEstu2);
+
+                        markupInlineOpcionesCursoEstu.setKeyboard(rowsInlineOpcionesCursoEstu);
+                        chatResponse.setReplyMarkup(markupInlineOpcionesCursoEstu);
                         break;
                 }
             }
@@ -140,7 +177,6 @@ public class UsuarioBl {
                     break;
                 case "verCursosProf":
                     List<Curso> listCursosProf = cursoBl.cursosbyIdProf(update.getCallbackQuery().getFrom());
-                    int numeroCurso = 0;
                     chatResponse = new EditMessageText()
                             .setChatId(update.getCallbackQuery().getMessage().getChatId())
                             .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
@@ -151,14 +187,12 @@ public class UsuarioBl {
                     List<InlineKeyboardButton> rowInlineCurso = new ArrayList<>();
                     for (Curso curso:listCursosProf) {
                         rowInlineCurso.add(new InlineKeyboardButton().setText("ID->"+curso.getIdCurso()+" "+curso.getNombreCurso()).setCallbackData("cursosProf;"+curso.getIdCurso()));
-                        numeroCurso++;
                     }
 
                     rowsInlineCurso.add(rowInlineCurso);
 
                     markupInlineCurso.setKeyboard(rowsInlineCurso);
                     chatResponse.setReplyMarkup(markupInlineCurso);
-                    numeroCurso = 0;
                     break;
                 case "verCursosEst":
                     List<CursoHasEstudiante> listCursosEst = cursoEstudianteBl.cursosPorEstudiante(update.getCallbackQuery().getFrom());
@@ -172,81 +206,13 @@ public class UsuarioBl {
                     List<List<InlineKeyboardButton>> rowsInlineCursoEst = new ArrayList<>();
                     List<InlineKeyboardButton> rowInlineCursoEst = new ArrayList<>();
                     for (Curso curso:listFinal) {
-                        rowInlineCursoEst.add(new InlineKeyboardButton().setText(curso.getNombreCurso()).setCallbackData("cursosEstu"));
+                        rowInlineCursoEst.add(new InlineKeyboardButton().setText("ID->"+curso.getIdCurso()+" "+curso.getNombreCurso()).setCallbackData("cursosEst;"+curso.getIdCurso()));
                     }
 
                     rowsInlineCursoEst.add(rowInlineCursoEst);
 
                     markupInlineCursoEst.setKeyboard(rowsInlineCursoEst);
                     chatResponse.setReplyMarkup(markupInlineCursoEst);
-                    break;
-                case "0cursosProf":
-
-                    listCursosProf = cursoBl.cursosbyIdProf(update.getCallbackQuery().getFrom());
-                    nombreCurso = listCursosProf.get(0).getNombreCurso();
-                    chatResponse = new EditMessageText()
-                            .setChatId(update.getCallbackQuery().getMessage().getChatId())
-                            .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                            .setText("Bienvenido al curso:"+nombreCurso);
-
-                    InlineKeyboardMarkup markupInlineOpcionesCursoProf = new InlineKeyboardMarkup();
-                    List<List<InlineKeyboardButton>> rowsInlineOpcionesCursoProf = new ArrayList<>();
-
-                    List<InlineKeyboardButton> rowInlineOpcionesCursoProf = new ArrayList<>();
-
-                    rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Subir archivo").setCallbackData("subir archivo"));
-                    rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Crear anuncio").setCallbackData("crear anuncio"));
-                    rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Crear examen").setCallbackData("crear examen"));
-                    rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Listado de estudiantes").setCallbackData("listado"));
-
-                    rowsInlineOpcionesCursoProf.add(rowInlineOpcionesCursoProf);
-
-                    markupInlineOpcionesCursoProf.setKeyboard(rowsInlineOpcionesCursoProf);
-                    chatResponse.setReplyMarkup(markupInlineOpcionesCursoProf);
-
-                    break;
-                case "1cursosProf":
-
-                    listCursosProf = cursoBl.cursosbyIdProf(update.getCallbackQuery().getFrom());
-                    nombreCurso = listCursosProf.get(1).getNombreCurso();
-                    chatResponse = new EditMessageText()
-                            .setChatId(update.getCallbackQuery().getMessage().getChatId())
-                            .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                            .setText("Bienvenido al curso:"+nombreCurso);
-
-                    markupInlineOpcionesCursoProf = new InlineKeyboardMarkup();
-                    rowsInlineOpcionesCursoProf = new ArrayList<>();
-
-                    rowInlineOpcionesCursoProf = new ArrayList<>();
-
-                    rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Subir archivo").setCallbackData("subir archivo"));
-                    rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Crear anuncio").setCallbackData("crear anuncio"));
-                    rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Crear examen").setCallbackData("crear examen"));
-                    rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Listado de estudiantes").setCallbackData("listado"));
-
-                    rowsInlineOpcionesCursoProf.add(rowInlineOpcionesCursoProf);
-
-                    markupInlineOpcionesCursoProf.setKeyboard(rowsInlineOpcionesCursoProf);
-                    chatResponse.setReplyMarkup(markupInlineOpcionesCursoProf);
-                    break;
-                case "cursosEstu":
-                    chatResponse = new EditMessageText()
-                            .setChatId(update.getCallbackQuery().getMessage().getChatId())
-                            .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                            .setText("Bienvenido:");
-
-                    InlineKeyboardMarkup markupInlineOpcionesCursoEstu = new InlineKeyboardMarkup();
-                    List<List<InlineKeyboardButton>> rowsInlineOpcionesCursoEstu = new ArrayList<>();
-                    List<InlineKeyboardButton> rowInlineOpcionesCursoEstu = new ArrayList<>();
-
-                    rowInlineOpcionesCursoEstu.add(new InlineKeyboardButton().setText("Ver archivos").setCallbackData("ver archivos"));
-                    rowInlineOpcionesCursoEstu.add(new InlineKeyboardButton().setText("Ver anuncios").setCallbackData("ver anuncios"));
-                    rowInlineOpcionesCursoEstu.add(new InlineKeyboardButton().setText("Tomar examen").setCallbackData("tomar examen"));
-
-                    rowsInlineOpcionesCursoEstu.add(rowInlineOpcionesCursoEstu);
-
-                    markupInlineOpcionesCursoEstu.setKeyboard(rowsInlineOpcionesCursoEstu);
-                    chatResponse.setReplyMarkup(markupInlineOpcionesCursoEstu);
                     break;
                 case "subir archivo":
                     chatResponse = new EditMessageText()
