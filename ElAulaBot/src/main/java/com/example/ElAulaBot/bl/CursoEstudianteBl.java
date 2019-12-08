@@ -43,6 +43,14 @@ public class CursoEstudianteBl {
         return cursoEstudianteDtos;
     }
 
+    public  List<CursoHasEstudiante> findAllByIdCurso(Curso curso){
+        List<CursoHasEstudiante> cursoHasEstudiantes = this.cursoEstudianteRepository.findAllByIdCurso(curso);
+        if (!cursoHasEstudiantes.isEmpty()){
+            return cursoHasEstudiantes;
+        }
+        return null;
+    }
+
     public String incribirCurso (User user, String codigoCurso){
         CursoHasEstudiante cursoHasEstudiante = new CursoHasEstudiante();
         Estudiante estudiante = this.estudianteRepository.findEstudianteByChatId(user.getId());

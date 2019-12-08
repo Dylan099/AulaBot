@@ -46,6 +46,17 @@ public class EstudianteBl {
         }
     }
 
+    public Estudiante findEstudianteByIdEstudiante(Estudiante estudiante1){
+        Estudiante estudiante =this.estudianteRepository.findEstudianteByIdEstudiante(estudiante1);
+        if(estudiante != null){
+            return estudiante;
+        }else{
+            LOGGER.info("El usuario no es un estudiante registrado");
+            return null;
+        }
+    }
+
+
     private boolean initEstudiante(User user) {
         boolean result = false;
         Estudiante estudiante = estudianteRepository.findEstudianteByChatId(user.getId());

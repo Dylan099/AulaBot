@@ -13,4 +13,5 @@ public interface CursoEstudianteRepository extends JpaRepository<CursoHasEstudia
     CursoEstudianteDto findCursoHasEstudianteByIdEstudiante(Integer idEstudiante);
     List<CursoHasEstudiante> findAllByIdEstudianteAndStatus(Estudiante estudiante, Integer status);
     CursoHasEstudiante findCursoHasEstudianteByIdEstudianteAndIdCurso(Estudiante estudiante, Curso curso);
+    List<CursoHasEstudiante> findAllByIdCurso(Curso curso);
 }

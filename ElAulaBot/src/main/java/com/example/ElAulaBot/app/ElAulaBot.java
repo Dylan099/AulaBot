@@ -3,6 +3,7 @@ package com.example.ElAulaBot.app;
 import com.example.ElAulaBot.bl.*;
 import com.example.ElAulaBot.dao.CursoRepository;
 import com.example.ElAulaBot.dao.ProfesorRepository;
+import com.example.ElAulaBot.domain.Anuncio;
 import com.example.ElAulaBot.domain.Curso;
 import com.example.ElAulaBot.domain.CursoHasEstudiante;
 import com.example.ElAulaBot.domain.Profesor;
@@ -24,7 +25,7 @@ import java.util.List;
 
 import static java.lang.Math.toIntExact;
 
-public class ElAulaBot extends TelegramLongPollingBot {
+public class ElAulaBot extends TelegramLongPollingBot implements NotificacionBl {
 
     ProfesorBl profesorBl;
     CursoBl cursoBl;
@@ -36,9 +37,10 @@ public class ElAulaBot extends TelegramLongPollingBot {
     RespuestaBl respuestaBl;
     AnuncioBl anuncioBl;
     ArchivoBl archivoBl;
+
     @Autowired
     public ElAulaBot(ProfesorBl profesorBl, EstudianteBl estudianteBl, CursoBl cursoBl, UsuarioBl usuarioBl, CursoEstudianteBl cursoEstudianteBl,
-                     ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl,ArchivoBl archivoBl) {
+                     ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl, ArchivoBl archivoBl, AnuncioBl anuncioBl) {
         this.profesorBl = profesorBl;
         this.estudianteBl = estudianteBl;
         this.cursoBl = cursoBl;
@@ -48,7 +50,11 @@ public class ElAulaBot extends TelegramLongPollingBot {
         this.preguntaBl = preguntaBl;
         this.respuestaBl = respuestaBl;
         this.archivoBl = archivoBl;
+        this.anuncioBl = anuncioBl;
     }
+
+    public ElAulaBot(){}
+
 
     private long chatId;
     private User user;
@@ -88,6 +94,25 @@ public class ElAulaBot extends TelegramLongPollingBot {
 
     public String getBotToken() {
         return "981092223:AAH16-cmUCALjzNDGm5b909TfEykX5pIoX8";
+    }
+
+    @Override
+    public void notificar(List<CursoHasEstudiante> estudiantes, String mensaje) {
+        System.out.println(estudiantes);
+
+        for(CursoHasEstudiante estudiante: estudiantes){
+            System.out.println(estudiante.getIdEstudiante().getIdEstudiante());
+            //Estudiante estudiante1 = estudianteBl.findEstudianteByIdEstudiante(estudiante.getIdEstudiante());
+            System.out.println(estudiante.getIdEstudiante().getChatId());
+            SendMessage sendMessage = new SendMessage().setChatId(String.valueOf(estudiante.getIdEstudiante().getChatId())).setText("El profesor de tu materia "+estudiante.getIdCurso().getNombreCurso()+" Anuncio que: "+mensaje);
+            try {
+                execute(sendMessage);
+            }catch (TelegramApiException e){
+                e.printStackTrace();
+            }
+        }
+
+
     }
 
 }

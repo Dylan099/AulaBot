@@ -1,5 +1,7 @@
 package com.example.ElAulaBot.bl;
 
+import com.example.ElAulaBot.app.ElAulaBot;
+import com.example.ElAulaBot.dao.CursoEstudianteRepository;
 import com.example.ElAulaBot.dao.UsuarioRepository;
 import com.example.ElAulaBot.domain.*;
 import com.example.ElAulaBot.dto.Status;
@@ -37,13 +39,15 @@ public class UsuarioBl {
     AnuncioBl anuncioBl;
     ArchivoBl archivoBl;
 
+    CursoEstudianteRepository cursoEstudianteRepository;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioBl.class);
 
     @Autowired
     public UsuarioBl(UsuarioRepository usuarioRepository, ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl, CursoEstudianteBl cursoEstudianteBl, ExamenBl examenBl,
-                     PreguntaBl preguntaBl, RespuestaBl respuestaBl, AnuncioBl anuncioBl,ArchivoBl archivoBl) { this.usuarioRepository = usuarioRepository;
+                     PreguntaBl preguntaBl, RespuestaBl respuestaBl, AnuncioBl anuncioBl,ArchivoBl archivoBl, CursoEstudianteRepository cursoEstudianteRepository) { this.usuarioRepository = usuarioRepository;
         this.profesorBl = profesorBl; this.estudianteBl = estudianteBl; this.cursoBl = cursoBl; this.cursoEstudianteBl = cursoEstudianteBl;
-        this.examenBl=examenBl;this.preguntaBl=preguntaBl;this.respuestaBl=respuestaBl;this.anuncioBl=anuncioBl;this.archivoBl=archivoBl;}
+        this.examenBl=examenBl;this.preguntaBl=preguntaBl;this.respuestaBl=respuestaBl;this.anuncioBl=anuncioBl;this.archivoBl=archivoBl;this.cursoEstudianteRepository=cursoEstudianteRepository;}
 
     public Usuario findUsuarioByChatId(String chatId){
         Usuario usuario = this.usuarioRepository.findUsuarioByChatId(chatId);
@@ -268,9 +272,12 @@ public class UsuarioBl {
                     case "Ingrese el contenido del anuncio: ":
                         Curso curso = cursoBl.findCursoByCursoId(Integer.parseInt(opcion[0]));
                         Anuncio anuncio = anuncioBl.crearAnuncio(curso, update.getMessage().getText());
+                        List<CursoHasEstudiante> estudiantesNotificar = cursoEstudianteBl.findAllByIdCurso(curso);
+                        ElAulaBot elAulaBot = new ElAulaBot();
+                        elAulaBot.notificar(estudiantesNotificar, anuncio.getContenidoAn());
                         chatResponse = new SendMessage()
                                 .setChatId(lastMessage.getChatId())
-                                .setText("Anuncio Creado");
+                                .setText("Anuncio Creado y notificado a sus estudiantes");
                         break;
                     case "Envie archivos solamente en formato PDF, Word, Excel":
                         Curso cursoArchivo = cursoBl.findCursoByCursoId(Integer.parseInt(opcion[0]));

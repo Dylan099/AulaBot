@@ -30,7 +30,7 @@ public class ElAulaBotApplication {
 
     @Autowired
     public ElAulaBotApplication(ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl, UsuarioBl usuarioBl, CursoEstudianteBl cursoEstudianteBl,
-                                ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl,ArchivoBl archivoBl) {
+                                ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl,ArchivoBl archivoBl, AnuncioBl anuncioBl) {
         this.profesorBl = profesorBl;
         this.estudianteBl = estudianteBl;
         this.cursoBl = cursoBl;
@@ -40,6 +40,7 @@ public class ElAulaBotApplication {
         this.preguntaBl = preguntaBl;
         this.respuestaBl = respuestaBl;
         this.archivoBl = archivoBl;
+        this.anuncioBl = anuncioBl;
     }
 
     public ElAulaBotApplication() {
@@ -56,7 +57,7 @@ public class ElAulaBotApplication {
 
         // TODO Register our bot
         try {
-            botsApi.registerBot(new ElAulaBot(profesorBl,estudianteBl,cursoBl,usuarioBl,cursoEstudianteBl,examenBl,preguntaBl, respuestaBl,archivoBl));
+            botsApi.registerBot(new ElAulaBot(profesorBl,estudianteBl,cursoBl,usuarioBl,cursoEstudianteBl,examenBl,preguntaBl, respuestaBl,archivoBl, anuncioBl));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
