@@ -40,10 +40,11 @@ public class ElAulaBot extends TelegramLongPollingBot implements NotificacionBl 
     RespuestaBl respuestaBl;
     AnuncioBl anuncioBl;
     ArchivoBl archivoBl;
+    EstudianteExamenBl estudianteExamenBl;
 
     @Autowired
     public ElAulaBot(ProfesorBl profesorBl, EstudianteBl estudianteBl, CursoBl cursoBl, UsuarioBl usuarioBl, CursoEstudianteBl cursoEstudianteBl,
-                     ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl, ArchivoBl archivoBl, AnuncioBl anuncioBl) {
+                     ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl, ArchivoBl archivoBl, AnuncioBl anuncioBl, EstudianteExamenBl estudianteExamenBl) {
         this.profesorBl = profesorBl;
         this.estudianteBl = estudianteBl;
         this.cursoBl = cursoBl;
@@ -54,6 +55,7 @@ public class ElAulaBot extends TelegramLongPollingBot implements NotificacionBl 
         this.respuestaBl = respuestaBl;
         this.archivoBl = archivoBl;
         this.anuncioBl = anuncioBl;
+        this.estudianteExamenBl = estudianteExamenBl;
     }
 
     public ElAulaBot(){}

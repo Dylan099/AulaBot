@@ -27,10 +27,11 @@ public class ElAulaBotApplication {
 	RespuestaBl respuestaBl;
 	AnuncioBl anuncioBl;
 	ArchivoBl archivoBl;
+	EstudianteExamenBl estudianteExamenBl;
 
     @Autowired
     public ElAulaBotApplication(ProfesorBl profesorBl, EstudianteBl estudianteBl,CursoBl cursoBl, UsuarioBl usuarioBl, CursoEstudianteBl cursoEstudianteBl,
-                                ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl,ArchivoBl archivoBl, AnuncioBl anuncioBl) {
+                                ExamenBl examenBl, PreguntaBl preguntaBl, RespuestaBl respuestaBl,ArchivoBl archivoBl, AnuncioBl anuncioBl, EstudianteExamenBl estudianteExamenBl) {
         this.profesorBl = profesorBl;
         this.estudianteBl = estudianteBl;
         this.cursoBl = cursoBl;
@@ -41,6 +42,7 @@ public class ElAulaBotApplication {
         this.respuestaBl = respuestaBl;
         this.archivoBl = archivoBl;
         this.anuncioBl = anuncioBl;
+        this.estudianteExamenBl = estudianteExamenBl;
     }
 
     public ElAulaBotApplication() {
@@ -57,7 +59,7 @@ public class ElAulaBotApplication {
 
         // TODO Register our bot
         try {
-            botsApi.registerBot(new ElAulaBot(profesorBl,estudianteBl,cursoBl,usuarioBl,cursoEstudianteBl,examenBl,preguntaBl, respuestaBl,archivoBl, anuncioBl));
+            botsApi.registerBot(new ElAulaBot(profesorBl,estudianteBl,cursoBl,usuarioBl,cursoEstudianteBl,examenBl,preguntaBl, respuestaBl,archivoBl, anuncioBl,estudianteExamenBl));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
