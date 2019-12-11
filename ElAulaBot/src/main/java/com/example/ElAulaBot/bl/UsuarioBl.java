@@ -161,6 +161,11 @@ public class UsuarioBl {
                     chatResponse = new SendMessage()
                             .setChatId(lastMessage.getChatId())
                             .setText("Gracias por usar el bot");
+                case "Fin":
+                    chatResponse = new SendMessage()
+                            .setChatId(lastMessage.getChatId())
+                            .setText("Examen Creado Exitosamente!");
+                    break;
             }
             switch (lastMessage.getLastMessageReceived()){
                 case "Ingrese el nombre del curso a crear: ":
@@ -254,19 +259,19 @@ public class UsuarioBl {
                         Respuesta respuesta4=respuestaBl.crearRespuesta(selectPreg4,update.getMessage().getText());
                         chatResponse = new SendMessage()
                                 .setChatId(lastMessage.getChatId())
-                                .setText(selectPreg4.getIdPregunta()+">¿Cual es la pregunta correcta?");
+                                .setText(selectPreg4.getIdPregunta()+">¿Cual es la respuesta correcta?");
                         break;
-                    case "¿Cual es la pregunta correcta?":
+                    case "¿Cual es la respuesta correcta?":
                         Pregunta selectPregFinal = preguntaBl.findPreguntaByIdPregunta(Integer.parseInt(opcion[0]));
                         if(update.getMessage().getText().matches("[1-4]+")){
                             respuestaBl.setRespuestaCorrecta(update,respuestaBl.findAllByPreguntaId(selectPregFinal));
                             chatResponse = new SendMessage()
                                     .setChatId(lastMessage.getChatId())
-                                    .setText("Examen Creado exitosamente");
+                                    .setText(selectPregFinal.getIdExamen().getIdExamen()+">Ingrese enunciado de la pregunta:(Ingrese Fin si desea terminar y guardar el examen)");
                         }else{
                             chatResponse = new SendMessage()
                                     .setChatId(lastMessage.getChatId())
-                                    .setText(selectPregFinal.getIdPregunta()+">¿Cual es la pregunta correcta?");
+                                    .setText(selectPregFinal.getIdPregunta()+">¿Cual es la respuesta correcta?");
                         }
                         break;
                     case "Ingrese el contenido del anuncio: ":
