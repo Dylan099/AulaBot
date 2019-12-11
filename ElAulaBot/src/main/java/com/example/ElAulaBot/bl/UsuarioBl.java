@@ -286,7 +286,8 @@ public class UsuarioBl {
                         break;
                     case "Envie archivos solamente en formato PDF, Word, Excel":
                         Curso cursoArchivo = cursoBl.findCursoByCursoId(Integer.parseInt(opcion[0]));
-                        Archivo archivo = archivoBl.crearArchivo(cursoArchivo, update);
+                        List<CursoHasEstudiante> estudiantesNotificar1 = cursoEstudianteBl.findAllByIdCurso(cursoArchivo);
+                        Archivo archivo = archivoBl.crearArchivo(cursoArchivo, update,estudiantesNotificar1);
                         chatResponse = new SendMessage()
                                 .setChatId(lastMessage.getChatId())
                                 .setText("Archivo Guardado");

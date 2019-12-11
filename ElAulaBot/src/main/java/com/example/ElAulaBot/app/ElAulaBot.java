@@ -12,8 +12,11 @@ import com.example.ElAulaBot.dto.ProfesorDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -111,8 +114,27 @@ public class ElAulaBot extends TelegramLongPollingBot implements NotificacionBl 
                 e.printStackTrace();
             }
         }
-
-
     }
+
+    public void notificarDocument(List<CursoHasEstudiante> estudiantes, Update update) {
+        System.out.println(estudiantes);
+
+        for(CursoHasEstudiante estudiante: estudiantes){
+            System.out.println(estudiante.getIdEstudiante().getIdEstudiante());
+            //Estudiante estudiante1 = estudianteBl.findEstudianteByIdEstudiante(estudiante.getIdEstudiante());
+            System.out.println(estudiante.getIdEstudiante().getChatId());
+            File file = new File();
+            GetFile getFile = new GetFile();
+            getFile.setFileId(update.getMessage().getDocument().getFileId());
+
+            SendDocument sendDocument = new SendDocument().setChatId(String.valueOf(estudiante.getIdEstudiante().getChatId())).setDocument(update.getMessage().getDocument().getFileId());
+            try {
+                execute(sendDocument);
+            }catch (TelegramApiException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
 
 }

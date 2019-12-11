@@ -39,8 +39,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "EstudianteHasExamen.findByTxuser", query = "SELECT e FROM EstudianteHasExamen e WHERE e.txuser = :txuser"),
     @NamedQuery(name = "EstudianteHasExamen.findByTxhost", query = "SELECT e FROM EstudianteHasExamen e WHERE e.txhost = :txhost"),
     @NamedQuery(name = "EstudianteHasExamen.findByTxdate", query = "SELECT e FROM EstudianteHasExamen e WHERE e.txdate = :txdate"),
-    @NamedQuery(name = "EstudianteHasExamen.findByStatus", query = "SELECT e FROM EstudianteHasExamen e WHERE e.status = :status"),
-    @NamedQuery(name = "EstudianteHasExamen.findByNotaExamen1", query = "SELECT e FROM EstudianteHasExamen e WHERE e.notaExamen1 = :notaExamen1")})
+    @NamedQuery(name = "EstudianteHasExamen.findByStatus", query = "SELECT e FROM EstudianteHasExamen e WHERE e.status = :status")})
 public class EstudianteHasExamen implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,7 +49,7 @@ public class EstudianteHasExamen implements Serializable {
     @Column(name = "id_Ehe")
     private Integer idEhe;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "notaExamen")
+    @Column(name = "nota_examen")
     private Float notaExamen;
     @Basic(optional = false)
     @NotNull
@@ -71,8 +70,6 @@ public class EstudianteHasExamen implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
-    @Column(name = "nota_examen")
-    private Float notaExamen1;
     @JoinColumn(name = "id_examen", referencedColumnName = "id_examen")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Examen idExamen;
@@ -141,14 +138,6 @@ public class EstudianteHasExamen implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
-    }
-
-    public Float getNotaExamen1() {
-        return notaExamen1;
-    }
-
-    public void setNotaExamen1(Float notaExamen1) {
-        this.notaExamen1 = notaExamen1;
     }
 
     public Examen getIdExamen() {
