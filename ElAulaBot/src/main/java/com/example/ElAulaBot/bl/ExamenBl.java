@@ -46,6 +46,15 @@ public class ExamenBl {
         return null;
     }
 
+    public List<Examen> findExamenByIdCurso(Curso curso){
+        List<Examen> listExamen = this.examenRepository.findExamenByIdCurso(curso);
+        if(!listExamen.isEmpty()){
+            return listExamen;
+        }else
+            LOGGER.info("Sin examenes");
+        return null;
+    }
+
     public Examen crearExamen (Curso curso, String nombreEx)
     {
         LOGGER.info("CREANDO CURSO "+nombreEx);

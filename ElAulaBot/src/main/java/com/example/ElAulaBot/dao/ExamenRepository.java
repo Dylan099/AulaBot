@@ -9,4 +9,5 @@ import java.util.List;
 public interface ExamenRepository extends JpaRepository<Examen,Integer> {
     List<Examen> findAllByStatus(int status);
     Examen findExamenByIdExamen(int pk);
+    List<Examen> findExamenByIdCurso(Curso curso);
 }

@@ -405,8 +405,26 @@ public class UsuarioBl {
                                 .setChatId(lastMessage.getChatId())
                                 .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
                                 .setText("Estos son los anuncios del curso: \n"+mensajepro);
-
                         break;
+                    case "tomar examen":
+                        Curso tomarexamen=cursoBl.findCursoByCursoId(Integer.parseInt(cursos[1]));
+                        List<Examen> listExamen = examenBl.findExamenByIdCurso(tomarexamen);
+
+                        chatResponse = new EditMessageText()
+                                .setChatId(lastMessage.getChatId())
+                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                                .setText("Examenes disponibles: ");
+
+                        InlineKeyboardMarkup markupInlineExamenes = new InlineKeyboardMarkup();
+                        List<List<InlineKeyboardButton>> rowsInlineExamenes = new ArrayList<>();
+                        List<InlineKeyboardButton> rowInlineExamenes = new ArrayList<>();
+                        for (Examen examen : listExamen) {
+                            rowInlineExamenes.add(new InlineKeyboardButton().setText(examen.getTitulo()).setCallbackData("cursoExamenes;"+examen.getIdExamen()));
+                        }
+                        rowsInlineExamenes.add(rowInlineExamenes);
+                        markupInlineExamenes.setKeyboard(rowsInlineExamenes);
+                        chatResponse.setReplyMarkup(markupInlineExamenes);
+
                 }
             }
             switch (lastSent){
