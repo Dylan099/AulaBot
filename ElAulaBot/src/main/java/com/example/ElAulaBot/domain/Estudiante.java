@@ -100,6 +100,8 @@ public class Estudiante implements Serializable {
     @Column(name = "status")
     private int status;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante", fetch = FetchType.LAZY)
+    private Collection<EstudianteHasExamen> estudianteHasExamenCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante", fetch = FetchType.LAZY)
     private Collection<CursoHasEstudiante> cursoHasEstudianteCollection;
 
     public Estudiante() {
@@ -207,6 +209,15 @@ public class Estudiante implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    @XmlTransient
+    public Collection<EstudianteHasExamen> getEstudianteHasExamenCollection() {
+        return estudianteHasExamenCollection;
+    }
+
+    public void setEstudianteHasExamenCollection(Collection<EstudianteHasExamen> estudianteHasExamenCollection) {
+        this.estudianteHasExamenCollection = estudianteHasExamenCollection;
     }
 
     @XmlTransient

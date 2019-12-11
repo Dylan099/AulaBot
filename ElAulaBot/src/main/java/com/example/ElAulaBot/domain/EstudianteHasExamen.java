@@ -10,9 +10,12 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -36,7 +39,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "EstudianteHasExamen.findByTxuser", query = "SELECT e FROM EstudianteHasExamen e WHERE e.txuser = :txuser"),
     @NamedQuery(name = "EstudianteHasExamen.findByTxhost", query = "SELECT e FROM EstudianteHasExamen e WHERE e.txhost = :txhost"),
     @NamedQuery(name = "EstudianteHasExamen.findByTxdate", query = "SELECT e FROM EstudianteHasExamen e WHERE e.txdate = :txdate"),
-    @NamedQuery(name = "EstudianteHasExamen.findByStatus", query = "SELECT e FROM EstudianteHasExamen e WHERE e.status = :status")})
+    @NamedQuery(name = "EstudianteHasExamen.findByStatus", query = "SELECT e FROM EstudianteHasExamen e WHERE e.status = :status"),
+    @NamedQuery(name = "EstudianteHasExamen.findByNotaExamen1", query = "SELECT e FROM EstudianteHasExamen e WHERE e.notaExamen1 = :notaExamen1")})
 public class EstudianteHasExamen implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -67,6 +71,14 @@ public class EstudianteHasExamen implements Serializable {
     @NotNull
     @Column(name = "status")
     private int status;
+    @Column(name = "nota_examen")
+    private Float notaExamen1;
+    @JoinColumn(name = "id_examen", referencedColumnName = "id_examen")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Examen idExamen;
+    @JoinColumn(name = "id_estudiante", referencedColumnName = "id_estudiante")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Estudiante idEstudiante;
 
     public EstudianteHasExamen() {
     }
@@ -129,6 +141,30 @@ public class EstudianteHasExamen implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public Float getNotaExamen1() {
+        return notaExamen1;
+    }
+
+    public void setNotaExamen1(Float notaExamen1) {
+        this.notaExamen1 = notaExamen1;
+    }
+
+    public Examen getIdExamen() {
+        return idExamen;
+    }
+
+    public void setIdExamen(Examen idExamen) {
+        this.idExamen = idExamen;
+    }
+
+    public Estudiante getIdEstudiante() {
+        return idEstudiante;
+    }
+
+    public void setIdEstudiante(Estudiante idEstudiante) {
+        this.idEstudiante = idEstudiante;
     }
 
     @Override
