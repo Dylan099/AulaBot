@@ -280,19 +280,32 @@ public class UsuarioBl {
                         Curso curso = cursoBl.findCursoByCursoId(Integer.parseInt(opcion[0]));
                         Anuncio anuncio = anuncioBl.crearAnuncio(curso, update.getMessage().getText());
                         List<CursoHasEstudiante> estudiantesNotificar = cursoEstudianteBl.findAllByIdCurso(curso);
-                        ElAulaBot elAulaBot = new ElAulaBot();
-                        elAulaBot.notificar(estudiantesNotificar, anuncio.getContenidoAn());
-                        chatResponse = new SendMessage()
-                                .setChatId(lastMessage.getChatId())
-                                .setText("Anuncio Creado y notificado a sus estudiantes");
+                        if(estudiantesNotificar!=null){
+                            ElAulaBot elAulaBot = new ElAulaBot();
+                            elAulaBot.notificar(estudiantesNotificar, anuncio.getContenidoAn());
+                            chatResponse = new SendMessage()
+                                    .setChatId(lastMessage.getChatId())
+                                    .setText("Anuncio Creado y notificado a sus estudiantes");
+                        }else{
+                            chatResponse = new SendMessage()
+                                    .setChatId(lastMessage.getChatId())
+                                    .setText("Su curso no cuenta con estudiantes. El anuncio no fue enviado");
+                        }
                         break;
                     case "Envie archivos solamente en formato PDF, Word, Excel":
                         Curso cursoArchivo = cursoBl.findCursoByCursoId(Integer.parseInt(opcion[0]));
                         List<CursoHasEstudiante> estudiantesNotificar1 = cursoEstudianteBl.findAllByIdCurso(cursoArchivo);
-                        Archivo archivo = archivoBl.crearArchivo(cursoArchivo, update,estudiantesNotificar1);
-                        chatResponse = new SendMessage()
-                                .setChatId(lastMessage.getChatId())
-                                .setText("Archivo Guardado");
+                        if(estudiantesNotificar1!=null){
+                            Archivo archivo = archivoBl.crearArchivo(cursoArchivo, update,estudiantesNotificar1);
+                            chatResponse = new SendMessage()
+                                    .setChatId(lastMessage.getChatId())
+                                    .setText("Archivo Guardado");
+                        }else{
+                            chatResponse = new SendMessage()
+                                    .setChatId(lastMessage.getChatId())
+                                    .setText("Su curso no cuenta con estudiantes. El archivo no fue enviado");
+                        }
+
                         break;
 
                 }
@@ -346,7 +359,6 @@ public class UsuarioBl {
                         rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Subir archivo").setCallbackData("subir archivo;"+select.getIdCurso()));
                         rowInlineOpcionesCursoProf.add(new InlineKeyboardButton().setText("Crear anuncio").setCallbackData("crear anuncio;"+select.getIdCurso()));
                         rowInlineOpcionesCursoProf2.add(new InlineKeyboardButton().setText("Crear examen").setCallbackData("crear examen;"+select.getIdCurso()));
-                        rowInlineOpcionesCursoProf2.add(new InlineKeyboardButton().setText("Listado de estudiantes").setCallbackData("listado;"+select.getIdCurso()));
 
                         rowsInlineOpcionesCursoProf.add(rowInlineOpcionesCursoProf);
                         rowsInlineOpcionesCursoProf.add(rowInlineOpcionesCursoProf2);
@@ -366,7 +378,6 @@ public class UsuarioBl {
                         List<InlineKeyboardButton> rowInlineOpcionesCursoEstu = new ArrayList<>();
                         List<InlineKeyboardButton> rowInlineOpcionesCursoEstu2 = new ArrayList<>();
 
-                        rowInlineOpcionesCursoEstu.add(new InlineKeyboardButton().setText("Ver archivos").setCallbackData("ver archivos;"+selectEst.getIdCurso()));
                         rowInlineOpcionesCursoEstu.add(new InlineKeyboardButton().setText("Ver anuncios").setCallbackData("ver anuncios;"+selectEst.getIdCurso()));
                         rowInlineOpcionesCursoEstu2.add(new InlineKeyboardButton().setText("Tomar examen").setCallbackData("tomar examen;"+selectEst.getIdCurso()));
                         rowInlineOpcionesCursoEstu2.add(new InlineKeyboardButton().setText("Ver notas").setCallbackData("ver notas;"+selectEst.getIdCurso()));
