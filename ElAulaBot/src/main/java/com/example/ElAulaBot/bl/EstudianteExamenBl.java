@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
@@ -75,6 +76,22 @@ public class EstudianteExamenBl {
     public float verificarNotaEstudiante(Estudiante estudiante, Examen examen){
         EstudianteHasExamen estudianteHasExamen = this.estudianteExamenRepository.findEstudianteHasExamenByIdEstudianteAndIdExamen(estudiante,examen);
         return estudianteHasExamen.getNotaExamen();
+    }
+
+    public List<EstudianteHasExamen> findByIdExamen(Examen examen){
+        List<EstudianteHasExamen> estudianteHasExamenList  = this.estudianteExamenRepository.findAllByIdExamen(examen);
+        if(!estudianteHasExamenList.isEmpty()){
+            return estudianteHasExamenList;
+        }
+        return null;
+    }
+
+    public List<EstudianteHasExamen> listNotas(Estudiante idEst){
+        List<EstudianteHasExamen> examenList = this.estudianteExamenRepository.findAllByIdEstudiante(idEst);
+        if(!examenList.isEmpty()){
+            return examenList;
+        }
+        return null;
     }
 
 }

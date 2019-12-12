@@ -369,6 +369,7 @@ public class UsuarioBl {
                         rowInlineOpcionesCursoEstu.add(new InlineKeyboardButton().setText("Ver archivos").setCallbackData("ver archivos;"+selectEst.getIdCurso()));
                         rowInlineOpcionesCursoEstu.add(new InlineKeyboardButton().setText("Ver anuncios").setCallbackData("ver anuncios;"+selectEst.getIdCurso()));
                         rowInlineOpcionesCursoEstu2.add(new InlineKeyboardButton().setText("Tomar examen").setCallbackData("tomar examen;"+selectEst.getIdCurso()));
+                        rowInlineOpcionesCursoEstu2.add(new InlineKeyboardButton().setText("Ver notas").setCallbackData("ver notas;"+selectEst.getIdCurso()));
 
                         rowsInlineOpcionesCursoEstu.add(rowInlineOpcionesCursoEstu);
                         rowsInlineOpcionesCursoEstu.add(rowInlineOpcionesCursoEstu2);
@@ -509,6 +510,30 @@ public class UsuarioBl {
                             chatResponse.setReplyMarkup(markupInlinePreguntas1);
                         }
 
+                        break;
+                    case "ver notas":
+                        Curso curso=cursoBl.findCursoByCursoId(Integer.parseInt(cursos[1]));
+                        List<Examen> verexamen = examenBl.findExamenByIdCurso(curso);
+                        chatResponse = new EditMessageText()
+                                .setChatId(lastMessage.getChatId())
+                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+                        if (verexamen == null){
+                            chatResponse.setText("Sin examenes");
+                        }else{
+                            String s = "Examenes disponibles: \n";
+                            for (Examen exam : verexamen
+                                 ) {
+                                s+=exam.getTitulo()+" : ";
+                                for (EstudianteHasExamen ehe:estudianteExamenBl.listNotas(estudianteBl.findEstudianteByChatId(Math.toIntExact(update.getCallbackQuery().getMessage().getChatId())))
+                                ) {
+                                    if(ehe.getIdExamen().getIdExamen()==exam.getIdExamen()){
+                                        s+= ehe.getNotaExamen();
+                                    }
+                                }
+                                s+="\n";
+                            }
+                            chatResponse.setText(s);
+                        }
                         break;
 
                 }
