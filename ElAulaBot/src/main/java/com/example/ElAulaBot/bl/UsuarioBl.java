@@ -551,13 +551,22 @@ public class UsuarioBl {
             }
             switch (lastSent){
                 case "profesor":
-                    List<String> messages = profesorBl.processUpdate(update.getCallbackQuery().getFrom());
-                    String answer = "Gracias por registrarte "+" como profesor. ";
-                    answer+= " ID -> "+lastMessage.getChatId();
-                    chatResponse = new EditMessageText()
-                            .setChatId(lastMessage.getChatId())
-                            .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                            .setText(answer);
+                    Estudiante profesor = estudianteBl.findEstudianteByChatId(Math.toIntExact(update.getCallbackQuery().getMessage().getChatId()));
+                    String answer="";
+                    if(profesor==null){
+                        List<String> messages = profesorBl.processUpdate(update.getCallbackQuery().getFrom());
+                        answer = "Gracias por registrarte "+" como profesor. ";
+                        answer+= " ID -> "+lastMessage.getChatId();
+                        chatResponse = new EditMessageText()
+                                .setChatId(lastMessage.getChatId())
+                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                                .setText(answer);
+                    }else{
+                        chatResponse = new EditMessageText()
+                                .setChatId(lastMessage.getChatId())
+                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                                .setText("Usted se encuentra registrado como estudiante.");
+                    }
                     break;
                 case "crear":
                     answer = "Ingrese el nombre del curso a crear: ";
@@ -567,13 +576,21 @@ public class UsuarioBl {
                             .setText(answer);
                     break;
                 case "estudiante":
-                    List<String> messagesEstudiante = estudianteBl.processUpdate(update.getCallbackQuery().getFrom());
-                    answer = "Gracias por registrarte "+update.getCallbackQuery().getFrom().getFirstName()+" "+update.getCallbackQuery().getFrom().getLastName()+" como estudiante.";
-                    answer += " Su ID: "+lastMessage.getChatId();
-                    chatResponse = new EditMessageText()
-                            .setChatId(lastMessage.getChatId())
-                            .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                            .setText(answer);
+                    Profesor estudiante=profesorBl.findProfesorByChatId(Math.toIntExact(update.getCallbackQuery().getMessage().getChatId()));
+                    if(estudiante==null){
+                        List<String> messagesEstudiante = estudianteBl.processUpdate(update.getCallbackQuery().getFrom());
+                        answer = "Gracias por registrarte "+update.getCallbackQuery().getFrom().getFirstName()+" "+update.getCallbackQuery().getFrom().getLastName()+" como estudiante.";
+                        answer += " Su ID: "+lastMessage.getChatId();
+                        chatResponse = new EditMessageText()
+                                .setChatId(lastMessage.getChatId())
+                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                                .setText(answer);
+                    }else{
+                        chatResponse = new EditMessageText()
+                                .setChatId(lastMessage.getChatId())
+                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                                .setText("Usted ya esta inscrito como profesor");
+                    }
                     break;
                 case "inscripcion":
                     answer = "Ingrese el codigo de curso al que desea inscribirse: ";
