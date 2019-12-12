@@ -30,7 +30,25 @@ public class EstudianteExamenBl {
         this.examenRepository = examenRepository;
     }
 
-
+    public EstudianteHasExamen findEstudianteHasExamenByIdExamenAndIdEstudiante(int var2)
+    {
+        EstudianteHasExamen estudianteHasExamen = estudianteExamenRepository.findEstudianteHasExamenByIdEhe(var2);
+        if(estudianteHasExamen!=null)
+        {
+            return estudianteHasExamen;
+        }else{
+            return null;
+        }
+    }
+    public EstudianteHasExamen findEstudianteHasExamenByIdEhe(int waso){
+        EstudianteHasExamen estudianteHasExamen = estudianteExamenRepository.findEstudianteHasExamenByIdEhe(waso);
+        if(estudianteHasExamen!=null)
+        {
+            return estudianteHasExamen;
+        }else{
+            return null;
+        }
+    }
     public EstudianteHasExamen estudianteExamen(Estudiante estudiante, Examen examen){
         EstudianteHasExamen estudianteHasExamen = new EstudianteHasExamen();
         estudianteHasExamen.setIdEstudiante(estudiante);

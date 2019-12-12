@@ -57,6 +57,18 @@ public class RespuestaBl {
         return null;
     }
 
+    public Boolean findRespuestaByIdPreguntaAndCorrecto(Pregunta pregunta, boolean var,int idRespuesta){
+        Respuesta respuesta = respuestaRepository.findRespuestaByIdPreguntaAndCorrecto(pregunta,var);
+        System.out.println(respuesta.getIdRespuesta());
+        if(respuesta.getIdRespuesta() == idRespuesta)
+        {
+            return true;
+        }else {
+            return false;
+        }
+
+    }
+
     public Respuesta crearRespuesta(Pregunta pregunta, String enunciado){
         LOGGER.info("Creando Respuesta para -> "+pregunta.getIdPregunta()+" "+enunciado);
         Respuesta respuesta= new Respuesta();

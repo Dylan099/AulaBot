@@ -10,4 +10,5 @@ public interface RespuestaRepository extends JpaRepository<Respuesta, Integer> {
     List<Respuesta> findAllByStatus(int status);
     List<Respuesta> findAllByIdPregunta(Pregunta pregunta);
     Respuesta findRespuestaByIdRespuesta(int pk);
+    Respuesta findRespuestaByIdPreguntaAndCorrecto(Pregunta pregunta,boolean var);
 }

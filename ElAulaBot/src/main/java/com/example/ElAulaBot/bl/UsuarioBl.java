@@ -2,6 +2,7 @@ package com.example.ElAulaBot.bl;
 
 import com.example.ElAulaBot.app.ElAulaBot;
 import com.example.ElAulaBot.dao.CursoEstudianteRepository;
+import com.example.ElAulaBot.dao.RespuestaRepository;
 import com.example.ElAulaBot.dao.UsuarioRepository;
 import com.example.ElAulaBot.domain.*;
 import com.example.ElAulaBot.dto.Status;
@@ -445,7 +446,7 @@ public class UsuarioBl {
 
 
                         for (Respuesta respuesta : listRespuestas){
-                            rowInlinePreguntas.add(new InlineKeyboardButton().setText(respuesta.getEnunciadoRe()).setCallbackData("respuestaExamen;"+examen.getIdExamen()+";"+respuesta.getIdRespuesta()+";"+(Integer.parseInt(cursos[2])+1)));
+                            rowInlinePreguntas.add(new InlineKeyboardButton().setText(respuesta.getEnunciadoRe()).setCallbackData("respuestaExamen;"+estudianteHasExamen.getIdEhe()+";"+respuesta.getIdRespuesta()+";"+(Integer.parseInt(cursos[2]))));
                         }
                         rowsInlinePreguntas.add(rowInlinePreguntas);
                         markupInlinePreguntas.setKeyboard(rowsInlinePreguntas);
@@ -453,29 +454,44 @@ public class UsuarioBl {
                         break;
                     case "respuestaExamen":
                         //TODO Validar Respuesta
+                        EstudianteHasExamen estudianteHasExamen2 = estudianteExamenBl.findEstudianteHasExamenByIdEhe(Integer.parseInt(cursos[1]));
                         System.out.println(cursos[1]+" "+ cursos[2]+" "+cursos[3]);
-                        Examen examen1 = examenBl.findExamenByExamenId(Integer.parseInt(cursos[1]));
+                        Examen examen1 = examenBl.findExamenByExamenId(estudianteHasExamen2.getIdExamen().getIdExamen());
                         List<Pregunta> listPreguntas1 = preguntaBl.findPreguntaByIdExamen(examen1);
-                        System.out.println(listPreguntas1.size());
-                        if(Integer.parseInt(cursos[3])==listPreguntas1.size()){
+
+                        float notaPregunta = 100 / (float)listPreguntas1.size();
+                        EstudianteHasExamen estudianteHasExamen1 = estudianteExamenBl.findEstudianteHasExamenByIdExamenAndIdEstudiante(estudianteHasExamen2.getIdEhe());
+                        System.out.println(listPreguntas1.get(Integer.parseInt(cursos[3])).getEnunciado());
+                        System.out.println(cursos[2]);
+                        if(respuestaBl.findRespuestaByIdPreguntaAndCorrecto(listPreguntas1.get(Integer.parseInt(cursos[3])),true,Integer.parseInt(cursos[2])))
+                        {
+                            estudianteHasExamen1.setNotaExamen(estudianteHasExamen1.getNotaExamen()+notaPregunta);
+                        }
+
+
+
+                        if(Integer.parseInt(cursos[3])==listPreguntas1.size()-1){
+
                             chatResponse = new EditMessageText()
                                     .setChatId(lastMessage.getChatId())
                                     .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                                    .setText("Examen Terminado"); //TODO NOTA
+                                    .setText("Examen Terminado. Su nota final es: "+estudianteHasExamen1.getNotaExamen()+"/100"); //TODO NOTA
+
+
                         }else{
                             chatResponse = new EditMessageText()
                                     .setChatId(lastMessage.getChatId())
                                     .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                                    .setText("Pregunta: "+listPreguntas1.get(Integer.parseInt(cursos[3])).getEnunciado());
+                                    .setText("Pregunta: "+listPreguntas1.get(Integer.parseInt(cursos[3])+1).getEnunciado());
 
-                            List<Respuesta> listRespuestas1 = respuestaBl.findAllByPreguntaId(listPreguntas1.get(Integer.parseInt(cursos[3])));
+                            List<Respuesta> listRespuestas1 = respuestaBl.findAllByPreguntaId(listPreguntas1.get(Integer.parseInt(cursos[3])+1));
                             InlineKeyboardMarkup markupInlinePreguntas1 = new InlineKeyboardMarkup();
                             List<List<InlineKeyboardButton>> rowsInlinePreguntas1 = new ArrayList<>();
                             List<InlineKeyboardButton> rowInlinePreguntas1 = new ArrayList<>();
 
 
                             for (Respuesta respuesta : listRespuestas1){
-                                rowInlinePreguntas1.add(new InlineKeyboardButton().setText(respuesta.getEnunciadoRe()).setCallbackData("respuestaExamen;"+examen1.getIdExamen()+";"+respuesta.getIdRespuesta()+";"+(Integer.parseInt(cursos[3])+1)));
+                                rowInlinePreguntas1.add(new InlineKeyboardButton().setText(respuesta.getEnunciadoRe()).setCallbackData("respuestaExamen;"+estudianteHasExamen1.getIdEhe()+";"+respuesta.getIdRespuesta()+";"+(Integer.parseInt(cursos[3])+1)));
                             }
                             rowsInlinePreguntas1.add(rowInlinePreguntas1);
                             markupInlinePreguntas1.setKeyboard(rowsInlinePreguntas1);
