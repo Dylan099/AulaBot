@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface EstudianteExamenRepository extends JpaRepository<EstudianteHasExamen,Integer> {
 
     EstudianteHasExamen findEstudianteHasExamenByIdEhe(int estudianteHasExamen);
+    EstudianteHasExamen findEstudianteHasExamenByIdEstudianteAndIdExamen(Estudiante estudiante, Examen examen);
 }

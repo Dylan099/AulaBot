@@ -400,14 +400,21 @@ public class UsuarioBl {
                     case "ver anuncios":
                         Curso veranuncio=cursoBl.findCursoByCursoId(Integer.parseInt(cursos[1]));
                         List<Anuncio> listAnuncios = anuncioBl.findAllByCursoId(veranuncio);
-                        String mensajepro = "";
-                        for (Anuncio anuncio2: listAnuncios) {
-                            mensajepro += anuncio2.getContenidoAn()+" "+anuncio2.getFechaPublicacionAn().toString() +"\n";
+                        if (listAnuncios == null){
+                            chatResponse = new EditMessageText()
+                                    .setChatId(lastMessage.getChatId())
+                                    .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                                    .setText("Sin anuncios");
+                        }else{
+                            String mensajepro = "";
+                            for (Anuncio anuncio2: listAnuncios) {
+                                mensajepro += anuncio2.getContenidoAn()+" "+anuncio2.getFechaPublicacionAn().toString() +"\n";
+                            }
+                            chatResponse = new EditMessageText()
+                                    .setChatId(lastMessage.getChatId())
+                                    .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
+                                    .setText("Estos son los anuncios del curso: \n"+mensajepro);
                         }
-                        chatResponse = new EditMessageText()
-                                .setChatId(lastMessage.getChatId())
-                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                                .setText("Estos son los anuncios del curso: \n"+mensajepro);
                         break;
                     case "tomar examen":
                         Curso tomarexamen=cursoBl.findCursoByCursoId(Integer.parseInt(cursos[1]));
@@ -415,45 +422,49 @@ public class UsuarioBl {
 
                         chatResponse = new EditMessageText()
                                 .setChatId(lastMessage.getChatId())
-                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                                .setText("Examenes disponibles: ");
-
-                        InlineKeyboardMarkup markupInlineExamenes = new InlineKeyboardMarkup();
-                        List<List<InlineKeyboardButton>> rowsInlineExamenes = new ArrayList<>();
-                        List<InlineKeyboardButton> rowInlineExamenes = new ArrayList<>();
-                        for (Examen examen : listExamen) {
-                            rowInlineExamenes.add(new InlineKeyboardButton().setText(examen.getTitulo()).setCallbackData("cursoExamenes;"+examen.getIdExamen()+";0"));
+                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+                        if (listExamen == null){
+                                    chatResponse.setText("Sin examenes");
+                        }else{
+                            chatResponse.setText("Examenes disponibles: ");
+                            InlineKeyboardMarkup markupInlineExamenes = new InlineKeyboardMarkup();
+                            List<List<InlineKeyboardButton>> rowsInlineExamenes = new ArrayList<>();
+                            List<InlineKeyboardButton> rowInlineExamenes = new ArrayList<>();
+                            for (Examen examen : listExamen) {
+                                rowInlineExamenes.add(new InlineKeyboardButton().setText(examen.getTitulo()).setCallbackData("cursoExamenes;"+examen.getIdExamen()+";0"));
+                            }
+                            rowsInlineExamenes.add(rowInlineExamenes);
+                            markupInlineExamenes.setKeyboard(rowsInlineExamenes);
+                            chatResponse.setReplyMarkup(markupInlineExamenes);
                         }
-                        rowsInlineExamenes.add(rowInlineExamenes);
-                        markupInlineExamenes.setKeyboard(rowsInlineExamenes);
-                        chatResponse.setReplyMarkup(markupInlineExamenes);
                         break;
                     case "cursoExamenes":
                         Examen examen = examenBl.findExamenByExamenId(Integer.parseInt(cursos[1]));
                         Estudiante estudiante = estudianteBl.findEstudianteByChatId(update.getCallbackQuery().getFrom().getId());
-                        EstudianteHasExamen estudianteHasExamen = estudianteExamenBl.estudianteExamen(estudiante,examen);
-                        List<Pregunta> listPreguntas = preguntaBl.findPreguntaByIdExamen(examen);
-                        List<Respuesta> listRespuestas = respuestaBl.findAllByPreguntaId(listPreguntas.get(Integer.parseInt(cursos[2])));
-
                         chatResponse = new EditMessageText()
                                 .setChatId(lastMessage.getChatId())
-                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                                .setText("Pregunta: "+listPreguntas.get(Integer.parseInt(cursos[2])).getEnunciado());
+                                .setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+                        if(estudianteExamenBl.verificarEstudiante(estudiante,examen)){
+                                   chatResponse.setText("Ya tomaste este examen, tu nota fue: "+estudianteExamenBl.verificarNotaEstudiante(estudiante,examen)+"/100");
+                        }else{
+                            EstudianteHasExamen estudianteHasExamen = estudianteExamenBl.estudianteExamen(estudiante,examen);
+                            List<Pregunta> listPreguntas = preguntaBl.findPreguntaByIdExamen(examen);
+                            List<Respuesta> listRespuestas = respuestaBl.findAllByPreguntaId(listPreguntas.get(Integer.parseInt(cursos[2])));
+                            chatResponse.setText("Pregunta: "+listPreguntas.get(Integer.parseInt(cursos[2])).getEnunciado());
+                            InlineKeyboardMarkup markupInlinePreguntas = new InlineKeyboardMarkup();
+                            List<List<InlineKeyboardButton>> rowsInlinePreguntas = new ArrayList<>();
+                            List<InlineKeyboardButton> rowInlinePreguntas = new ArrayList<>();
 
-                        InlineKeyboardMarkup markupInlinePreguntas = new InlineKeyboardMarkup();
-                        List<List<InlineKeyboardButton>> rowsInlinePreguntas = new ArrayList<>();
-                        List<InlineKeyboardButton> rowInlinePreguntas = new ArrayList<>();
-
-
-                        for (Respuesta respuesta : listRespuestas){
-                            rowInlinePreguntas.add(new InlineKeyboardButton().setText(respuesta.getEnunciadoRe()).setCallbackData("respuestaExamen;"+estudianteHasExamen.getIdEhe()+";"+respuesta.getIdRespuesta()+";"+(Integer.parseInt(cursos[2]))));
+                            for (Respuesta respuesta : listRespuestas){
+                                rowInlinePreguntas.add(new InlineKeyboardButton().setText(respuesta.getEnunciadoRe()).setCallbackData("respuestaExamen;"+estudianteHasExamen.getIdEhe()+";"+respuesta.getIdRespuesta()+";"+(Integer.parseInt(cursos[2]))));
+                            }
+                            rowsInlinePreguntas.add(rowInlinePreguntas);
+                            markupInlinePreguntas.setKeyboard(rowsInlinePreguntas);
+                            chatResponse.setReplyMarkup(markupInlinePreguntas);
                         }
-                        rowsInlinePreguntas.add(rowInlinePreguntas);
-                        markupInlinePreguntas.setKeyboard(rowsInlinePreguntas);
-                        chatResponse.setReplyMarkup(markupInlinePreguntas);
+
                         break;
                     case "respuestaExamen":
-                        //TODO Validar Respuesta
                         EstudianteHasExamen estudianteHasExamen2 = estudianteExamenBl.findEstudianteHasExamenByIdEhe(Integer.parseInt(cursos[1]));
                         System.out.println(cursos[1]+" "+ cursos[2]+" "+cursos[3]);
                         Examen examen1 = examenBl.findExamenByExamenId(estudianteHasExamen2.getIdExamen().getIdExamen());
@@ -475,7 +486,7 @@ public class UsuarioBl {
                             chatResponse = new EditMessageText()
                                     .setChatId(lastMessage.getChatId())
                                     .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                                    .setText("Examen Terminado. Su nota final es: "+estudianteHasExamen1.getNotaExamen()+"/100"); //TODO NOTA
+                                    .setText("Examen Terminado. Su nota final es: "+estudianteHasExamen1.getNotaExamen()+"/100");
 
 
                         }else{

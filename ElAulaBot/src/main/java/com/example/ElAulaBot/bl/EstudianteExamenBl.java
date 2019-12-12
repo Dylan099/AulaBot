@@ -63,4 +63,18 @@ public class EstudianteExamenBl {
 
     }
 
+    public boolean verificarEstudiante(Estudiante estudiante, Examen examen){
+        boolean estado = false;
+        EstudianteHasExamen estudianteHasExamen = this.estudianteExamenRepository.findEstudianteHasExamenByIdEstudianteAndIdExamen(estudiante,examen);
+        if (estudianteHasExamen != null){
+            estado = true;
+        }
+        return estado;
+    }
+
+    public float verificarNotaEstudiante(Estudiante estudiante, Examen examen){
+        EstudianteHasExamen estudianteHasExamen = this.estudianteExamenRepository.findEstudianteHasExamenByIdEstudianteAndIdExamen(estudiante,examen);
+        return estudianteHasExamen.getNotaExamen();
+    }
+
 }
